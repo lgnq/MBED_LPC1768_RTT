@@ -1,0 +1,9 @@
+
+.sconsign.dblite
+*.pyc
+*.o
+cconfig.h
+rtthread-lpc17xx.elf
+rtthread-lpc17xx.map
+rtthread.bin
+.sconsign.dblite
