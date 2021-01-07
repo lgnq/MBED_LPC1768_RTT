@@ -51,6 +51,7 @@ void rt_hw_board_init(void)
 {
 	/* NVIC Configuration */
 #define NVIC_VTOR_MASK              0x3FFFFF80
+
 #ifdef  VECT_TAB_RAM
 	/* Set the Vector Table base location at 0x10000000 */
 	SCB->VTOR  = (0x10000000 & NVIC_VTOR_MASK);
@@ -61,12 +62,13 @@ void rt_hw_board_init(void)
 
 	/* initialize systick */
 	SysTick_Config( SystemCoreClock/RT_TICK_PER_SECOND);
+
 	/* set pend exception priority */
 	NVIC_SetPriority(PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
 
 	rt_hw_led_init();
-	rt_hw_led_on(1);
-	rt_hw_led_off(0);
+	rt_hw_led_on(LED1);
+	rt_hw_led_off(LED0);
 	
 #ifdef RT_USING_UART0
 	rt_hw_uart_init();
