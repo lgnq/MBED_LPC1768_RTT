@@ -8,7 +8,7 @@ board.c
 led.c
 """)
 
-if GetDepend(['BSP_USING_SERIAL']):
+if GetDepend(['RT_USING_SERIAL']):
     src += ['drv_uart.c']
 
 CPPPATH = [cwd]

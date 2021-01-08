@@ -19,12 +19,6 @@
 #include "LPC17xx.h"
 
 /**
- * @addtogroup LPC17xx
- */
-
-/*@{*/
-
-/**
  * This is the timer interrupt service routine.
  *
  */
@@ -75,5 +69,3 @@ void rt_hw_board_init(void)
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
-
-/*@}*/

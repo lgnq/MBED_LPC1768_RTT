@@ -18,11 +18,6 @@ env = Environment(tools = ['mingw'],
 	AR = rtconfig.AR, ARFLAGS = '-rc',
 	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 
-if rtconfig.PLATFORM == 'iar':
-	env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
-	env.Replace(ARFLAGS = [''])
-	env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -o $TARGET --map project.map'])
-
 Export('RTT_ROOT')
 Export('rtconfig')
 

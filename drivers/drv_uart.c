@@ -32,11 +32,6 @@
 #define LSR_TEMT    0x40
 #define LSR_RXFE    0x80
 
-/**
- * @addtogroup LPC176x
- */
-
-/*@{*/
 #if defined(RT_USING_UART0) && defined(RT_USING_DEVICE)
 
 #define UART_BAUDRATE   115200
@@ -320,5 +315,3 @@ void rt_hw_uart_init(void)
                        "uart0", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX);
 }
 #endif /* end of UART */
-
-/*@}*/

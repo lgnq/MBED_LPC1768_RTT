@@ -66,7 +66,6 @@
 #define RT_USING_DEVICE
 
 #define RT_USING_SERIAL
-#define BSP_USING_SERIAL
 
 // <bool name="RT_USING_UART0" description="Using UART0" default="true" />
 #define RT_USING_UART0
