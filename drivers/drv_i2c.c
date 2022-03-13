@@ -114,7 +114,7 @@ static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
 
             if (I2C_MasterTransferData(lpc_i2c->I2C, &xfer, I2C_TRANSFER_POLLING) != SUCCESS)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                // i2c_dbg("i2c bus write failed,i2c bus stop!\n");
                 goto out;
             }
         }
@@ -126,7 +126,7 @@ static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
 
             if (I2C_MasterTransferData(lpc_i2c->I2C, &xfer, I2C_TRANSFER_POLLING) != SUCCESS)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                // i2c_dbg("i2c bus write failed,i2c bus stop!\n");
                 goto out;
             }
         }
@@ -134,7 +134,7 @@ static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
     ret = i;
 
 out:
-    i2c_dbg("send stop condition\n");
+    // i2c_dbg("send stop condition\n");
 
     return ret;
 }

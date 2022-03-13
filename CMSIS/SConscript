@@ -22,6 +22,8 @@ LPC17xx/src/lpc17xx_systick.c
 LPC17xx/src/lpc17xx_timer.c
 LPC17xx/src/lpc17xx_uart.c
 LPC17xx/src/lpc17xx_wdt.c
+LPC17xx/src/lpc17xx_clkpwr.c
+LPC17xx/src/lpc17xx_libcfg_default.c
 """)
 
 # add for startup script 
