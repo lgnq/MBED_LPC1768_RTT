@@ -7,3 +7,4 @@ rtthread-lpc17xx.elf
 rtthread-lpc17xx.map
 rtthread.bin
 .sconsign.dblite
+*.dblite
