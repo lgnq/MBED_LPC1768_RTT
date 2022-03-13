@@ -85,17 +85,31 @@
 #define RT_CONSOLE_DEVICE_NAME	"uart0"
 // </section>
 
-// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
-// #define RT_USING_COMPONENTS_INIT
-// <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
+// // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
+// // #define RT_USING_COMPONENTS_INIT
+// // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
+// #define RT_USING_FINSH
+// // <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
+// #define FINSH_USING_SYMTAB
+// // <bool name="FINSH_USING_DESCRIPTION" description="Keeping description in symbol table" default="true" />
+// #define FINSH_USING_DESCRIPTION
+// // <integer name="FINSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
+// #define FINSH_THREAD_STACK_SIZE	4096
+// // </section>
+
 #define RT_USING_FINSH
-// <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
+#define RT_USING_MSH
+#define FINSH_USING_MSH
+#define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
-// <bool name="FINSH_USING_DESCRIPTION" description="Keeping description in symbol table" default="true" />
+#define FINSH_CMD_SIZE 80
+#define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
-// <integer name="FINSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
-#define FINSH_THREAD_STACK_SIZE	4096
-// </section>
+#define FINSH_ARG_MAX 10
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_LIBC" description="Using C library" default="true" />

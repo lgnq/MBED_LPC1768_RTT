@@ -1333,3 +1333,7 @@ static void mlx90393(int argc, char **argv)
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(mlx90393, mlx90393 sensor function);    
 #endif
+
+#ifdef FINSH_USING_MSH
+    MSH_CMD_EXPORT(mlx90393, mlx90393 sensor function);
+#endif
