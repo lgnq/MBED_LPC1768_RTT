@@ -8,3 +8,4 @@ rtthread-lpc17xx.map
 rtthread.bin
 .sconsign.dblite
 *.dblite
+.sconsign.dblite
