@@ -111,10 +111,10 @@ static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
             xfer.sl_addr7bit = msg->addr;
             xfer.rx_data     = msg->buf;
             xfer.rx_length   = msg->len;
-
+            xfer.retransmissions_max = 3;
             if (I2C_MasterTransferData(lpc_i2c->I2C, &xfer, I2C_TRANSFER_POLLING) != SUCCESS)
             {
-                // i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                rt_kprintf("i2c bus read failed, i2c bus stop!\n");
                 goto out;
             }
         }
@@ -123,11 +123,15 @@ static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
             xfer.sl_addr7bit = msg->addr;
             xfer.tx_data     = msg->buf;
             xfer.tx_length   = msg->len;
+            xfer.retransmissions_max = 3;
 
-            if (I2C_MasterTransferData(lpc_i2c->I2C, &xfer, I2C_TRANSFER_POLLING) != SUCCESS)
+            // if (!(msg->flags & RT_I2C_NO_STOP))
             {
-                // i2c_dbg("i2c bus write failed,i2c bus stop!\n");
-                goto out;
+                if (I2C_MasterTransferData(lpc_i2c->I2C, &xfer, I2C_TRANSFER_POLLING) != SUCCESS)
+                {
+                    rt_kprintf("i2c bus write failed, i2c bus stop!\n");
+                    goto out;
+                }
             }
         }
     }
@@ -220,6 +224,21 @@ int rt_hw_i2c_init(void)
 
 	/* Enable Slave I2C operation */
 	I2C_Cmd(LPC_I2C0, ENABLE);    
+#endif
+
+#ifdef BSP_USING_I2C1
+	PinCfg.Funcnum = 3;
+	PinCfg.Pinnum = 0;
+	PinCfg.Portnum = 0;
+	PINSEL_ConfigPin(&PinCfg);
+	PinCfg.Pinnum = 1;
+	PINSEL_ConfigPin(&PinCfg);
+
+    // Initialize Slave I2C peripheral
+	I2C_Init(LPC_I2C1, 100000);
+
+	/* Enable Slave I2C operation */
+	I2C_Cmd(LPC_I2C1, ENABLE);    
 #endif
 
 #ifdef BSP_USING_I2C2
