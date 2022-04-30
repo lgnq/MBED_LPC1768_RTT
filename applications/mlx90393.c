@@ -459,13 +459,13 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
         write_buffer[1] = reg << 2;
 
         msgs[0].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[0].flags = RT_I2C_WR;        /* Write flag */
+        msgs[0].flags = RT_I2C_WR | RT_I2C_NO_STOP;        /* Write flag */
         msgs[0].buf   = write_buffer;     /* Slave register address */
         msgs[0].len   = 2;                /* Number of bytes sent */
 
         msgs[1].addr  = dev->i2c_addr;    /* Slave address */
         msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = read_buffer;              /* Read data pointer */
+        msgs[1].buf   = read_buffer;      /* Read data pointer */
         msgs[1].len   = 3;                /* Number of bytes read */
 
         if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
@@ -1135,7 +1135,7 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
         {
             /* find mlx90393 device at address: 0x19 */
             dev->i2c_addr = MLX90393_I2C_ADDRESS;
-            // if (mlx90393_read_regs(dev, MPU6XXX_RA_WHO_AM_I, 1, &reg) != RT_EOK)
+            // if (mlx90393_read_reg(dev, MPU6XXX_RA_WHO_AM_I, 1, &reg) != RT_EOK)
             // {
             //     /* find mlx90393 device at address 0x19 */
             //     dev->i2c_addr = MPU6XXX_ADDRESS_AD0_HIGH;
@@ -1146,6 +1146,7 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
             //     }
             // }
             LOG_D("Device i2c address is:'0x%x'!", dev->i2c_addr);
+            rt_kprintf("Device i2c address is:'0x%x'!\r\n", dev->i2c_addr);
         }
     }
     else if (dev->bus->type == RT_Device_Class_SPIDevice)
