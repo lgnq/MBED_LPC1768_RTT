@@ -26,27 +26,27 @@ rt_err_t mlx90393_i2c_cmd(struct mlx90393_device *dev, enum cmd c)
     uint8_t write_buffer[10];
     uint8_t read_buffer[10];
 
-        write_buffer[0] = c;
+    write_buffer[0] = c;
 
-        msgs[0].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[0].flags = RT_I2C_WR;        /* Write flag */
-        msgs[0].buf   = write_buffer;     /* Slave register address */
-        msgs[0].len   = 1;                /* Number of bytes sent */
+    msgs[0].addr  = dev->i2c_addr;    /* Slave address */
+    msgs[0].flags = RT_I2C_WR;        /* Write flag */
+    msgs[0].buf   = write_buffer;     /* Slave register address */
+    msgs[0].len   = 1;                /* Number of bytes sent */
 
-        msgs[1].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = read_buffer;      /* Read data pointer */
-        msgs[1].len   = 1;                /* Number of bytes read */
+    msgs[1].addr  = dev->i2c_addr;    /* Slave address */
+    msgs[1].flags = RT_I2C_RD;        /* Read flag */
+    msgs[1].buf   = read_buffer;      /* Read data pointer */
+    msgs[1].len   = 1;                /* Number of bytes read */
 
-        if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
-        {
-            //if (buf[0] == 0x00)
-            res = RT_EOK;
-        }
-        else
-        {
-            res = -RT_ERROR;
-        }
+    if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
+    {
+        //if (buf[0] == 0x00)
+        res = RT_EOK;
+    }
+    else
+    {
+        res = -RT_ERROR;
+    }
 #endif
 
     return res;
