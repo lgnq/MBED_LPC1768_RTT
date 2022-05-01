@@ -1125,6 +1125,7 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
 
     if (dev->bus->type == RT_Device_Class_I2CBUS)
     {
+#ifdef RT_USING_I2C
         if (param != RT_NULL)
         {
             dev->i2c_addr = param;
@@ -1145,6 +1146,7 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
             // }
             rt_kprintf("Device i2c address is:'0x%x'!\r\n", dev->i2c_addr);
         }
+#endif        
     }
     else if (dev->bus->type == RT_Device_Class_SPIDevice)
     {
@@ -1244,7 +1246,7 @@ static void mlx90393(int argc, char **argv)
         rt_kprintf("                               var = 0 means disable, = 1 means enable\n");
         rt_kprintf("         read [num]            read [num] times mlx90393\n");
         rt_kprintf("                               num default 5\n");
-        return ;
+        return;
     }
     else
     {
@@ -1263,7 +1265,7 @@ static void mlx90393(int argc, char **argv)
         else if (dev == RT_NULL)
         {
             rt_kprintf("Please probe mlx90393 first!\n");
-            return ;
+            return;
         }
         else if (!strcmp(argv[1], "rt"))
         {
