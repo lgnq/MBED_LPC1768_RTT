@@ -14,8 +14,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define DBG_TAG "mlx90393"
-#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include "mlx90393.h"
@@ -1114,14 +1112,14 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
     dev = rt_calloc(1, sizeof(struct mlx90393_device));
     if (dev == RT_NULL)
     {
-        LOG_E("Can't allocate memory for mlx90393 device on '%s' ", dev_name);
+        rt_kprintf("Can't allocate memory for mlx90393 device on '%s' ", dev_name);
         goto __exit;
     }
 
     dev->bus = rt_device_find(dev_name);
     if (dev->bus == RT_NULL)
     {
-        LOG_E("Can't find device:'%s'", dev_name);
+        rt_kprintf("Can't find device:'%s'", dev_name);
         goto __exit;
     }
 
@@ -1141,11 +1139,10 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
             //     dev->i2c_addr = MPU6XXX_ADDRESS_AD0_HIGH;
             //     if (mlx90393_read_regs(dev, MPU6XXX_RA_WHO_AM_I, 1, &reg) != RT_EOK)
             //     {
-            //         LOG_E("Can't find device at '%s'!", dev_name);
+            //         rt_kprintf("Can't find device at '%s'!", dev_name);
             //         goto __exit;
             //     }
             // }
-            LOG_D("Device i2c address is:'0x%x'!", dev->i2c_addr);
             rt_kprintf("Device i2c address is:'0x%x'!\r\n", dev->i2c_addr);
         }
     }
@@ -1163,13 +1160,13 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
     }
     else
     {
-        LOG_E("Unsupported device:'%s'!", dev_name);
+        rt_kprintf("Unsupported device:'%s'!", dev_name);
         goto __exit;
     }
 
     // if (mlx90393_read_regs(dev, MPU6XXX_RA_WHO_AM_I, 1, &reg) != RT_EOK)
     // {
-    //     LOG_E("Failed to read device id!");
+    //     rt_kprintf("Failed to read device id!");
     //     goto __exit;
     // }
 
@@ -1178,13 +1175,13 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
     // switch (dev->id)
     // {
     // case MPU6050_WHO_AM_I:
-    //     LOG_I("Find device: mpu6050!");
+    //     rt_kprintf("Find device: mpu6050!");
     //     break;
     // case 0xFF:
-    //     LOG_E("No device connection!");
+    //     rt_kprintf("No device connection!");
     //     goto __exit;
     // default:
-    //     LOG_W("Unknown device id: 0x%x!", reg);
+    //     rt_kprintf("Unknown device id: 0x%x!", reg);
     // }
 
     // res += mpu6xxx_get_param(dev, MPU6XXX_ACCEL_RANGE, &dev->config.accel_range);
@@ -1197,11 +1194,11 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
 
     if (res == RT_EOK)
     {
-        LOG_I("Device init succeed!");
+        rt_kprintf("Device init succeed!");
     }
     else
     {
-        LOG_W("Error in device initialization!");
+        rt_kprintf("Error in device initialization!");
     }
     return dev;
 
