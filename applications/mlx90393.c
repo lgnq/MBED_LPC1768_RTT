@@ -14,8 +14,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <rtdbg.h>
-
 #include "mlx90393.h"
 
 rt_err_t mlx90393_i2c_cmd(struct mlx90393_device *dev, enum cmd c)
