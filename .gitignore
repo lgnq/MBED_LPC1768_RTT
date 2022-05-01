@@ -10,3 +10,4 @@ rtthread.bin
 *.dblite
 .sconsign.dblite
 .sconsign.dblite
+*.dblite
