@@ -1296,15 +1296,30 @@ static void mlx90393(int argc, char **argv)
                 break;
             case 1:
                 reg1.word_val = register_val;
-                rt_kprintf("REG[1] = 0x%x, BURST_DATA_RATE = 0x%x, BURST_SEL = 0x%x, TCMP_EN = 0x%x, EXT_TRG = 0x%x, WOC_DIFF = 0x%x, COMM_MODE = 0x%x, TRIG_INT = 0x%x\r\n", reg1.word_val, reg1.burst_data_rate, reg1.burst_sel, reg1.tcmp_en, reg1.ext_trg, reg1.woc_diff, reg1.comm_mode, reg1.trig_int);
+                rt_kprintf("REG[1] = 0x%x\r\n", reg1.word_val);
+                rt_kprintf("[BIT0-5] BURST_DATA_RATE = 0x%x - Defines TINTERVAL as BURST_DATA_RATE * 20ms\r\n", reg1.burst_data_rate);
+                rt_kprintf("[BIT6-9] BURST_SEL       = 0x%x - Defines the MDATA in burst mode if SB command argument = 0\r\n", reg1.burst_sel);
+                rt_kprintf("[BITA-A] TCMP_EN         = 0x%x - Enables on-chip sensitivity drift compensation\r\n", reg1.tcmp_en);
+                rt_kprintf("[BITB-B] EXT_TRG         = 0x%x - Allows external trigger inputs when set, if TRIG_INT_SEL = 0\r\n", reg1.ext_trg);
+                rt_kprintf("[BITC-C] WOC_DIFF        = 0x%x - Sets the Wake-up On Change based on Δ{sample(t),sample(t-1)}\r\n", reg1.woc_diff);
+                rt_kprintf("[BITD-E] COMM_MODE       = 0x%x - Allow only SPI [10b], only I2C [11b] or both [0Xb] according to CS pin\r\n", reg1.comm_mode);
+                rt_kprintf("[BITF-F] TRIG_INT        = 0x%x - Puts TRIG_INT pin in TRIG mode when cleared, INT mode otherwise\r\n", reg1.trig_int);
                 break;
             case 2:
                 reg2.word_val = register_val;
-                rt_kprintf("REG[2] = 0x%x, OSR = 0x%x, DIG_FILT = 0x%x, RES_X = 0x%x, RES_Y = 0x%x, RES_Z = 0x%x, OSR2 = 0x%x\r\n", reg2.word_val, reg2.osr, reg2.dig_filt, reg2.res_x, reg2.res_y, reg2.res_z, reg2.osr2);
+                rt_kprintf("REG[2] = 0x%x\r\n", reg2.word_val);
+                rt_kprintf("[BIT0-1] OSR      = 0x%x - Magnetic sensor ADC oversampling ratio\r\n", reg2.osr);
+                rt_kprintf("[BIT2-4] DIG_FILT = 0x%x - Digital filter applicable to ADC\r\n", reg2.dig_filt);
+                rt_kprintf("[BIT5-6] RES_X    = 0x%x - Selects the desired 16-bit output value from the 19-bit ADC\r\n", reg2.res_x);
+                rt_kprintf("[BIT7-8] RES_Y    = 0x%x - Selects the desired 16-bit output value from the 19-bit ADC\r\n", reg2.res_y);
+                rt_kprintf("[BIT9-A] RES_Z    = 0x%x - Selects the desired 16-bit output value from the 19-bit ADC\r\n", reg2.res_z);
+                rt_kprintf("[BITB-C] OSR_2    = 0x%x - Temperature sensor ADC oversampling ratio\r\n", reg2.osr2);
                 break;
             case 3:
                 reg3.word_val = register_val;
-                rt_kprintf("REG[3] = 0x%x, SENS_TC_LT = 0x%x, SENS_TC_HT = 0x%x\r\n", reg3.word_val, reg3.sens_tc_lt, reg3.sens_tc_ht);
+                rt_kprintf("REG[3] = 0x%x\r\n", reg3.word_val);
+                rt_kprintf("[BIT0-7] SENS_TC_LT = 0x%x - Sensitivity drift compensation factor for T > TREF\r\n", reg3.sens_tc_lt);
+                rt_kprintf("[BIT8-F] SENS_TC_HT = 0x%x - Sensitivity drift compensation factor for T < TREF\r\n", reg3.sens_tc_ht);
                 break;
             default:
                 rt_kprintf("REG[%d] = 0x%x\r\n", atoi(argv[2]), register_val);
