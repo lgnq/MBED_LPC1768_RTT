@@ -17,8 +17,8 @@
 #define MLX90393_I2C_ADDRESS                    0x0C        // address pin A0,A1 low (GND), default for MLX90393
 // #define MLX90393_I2C_ADDRESS                    (0x18 >> 1) // 7-bit address pin A0,A1 low (GND), default for MLX90393
 
-  enum cmd
-  {
+enum cmd
+{
     CMD_NOP               = 0x00,
     CMD_EXIT              = 0x80,
     CMD_START_BURST       = 0x10,
@@ -30,15 +30,15 @@
     CMD_MEMORY_RECALL     = 0xd0,
     CMD_MEMORY_STORE      = 0xe0,
     CMD_RESET             = 0xf0
-  };
+};
 
-  enum
-  {
-      Z_FLAG = 0x8,
-      Y_FLAG = 0x4,
-      X_FLAG = 0x2,
-      T_FLAG = 0x1
-  } axis_flag_t;
+enum
+{
+    Z_FLAG = 0x8,
+    Y_FLAG = 0x4,
+    X_FLAG = 0x2,
+    T_FLAG = 0x1
+} axis_flag_t;
 
 /* Accelerometer full scale range */
 enum mlx90393_accel_range
