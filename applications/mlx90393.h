@@ -14,8 +14,8 @@
 #include <rtthread.h>
 #include <stdint.h>
 
-#define MLX90393_I2C_ADDRESS                    0x0C // address pin A0,A1 low (GND), default for MLX90393
-// #define MLX90393_I2C_ADDRESS                    0x19 // address pin A0,A1 low (GND), default for MLX90393
+#define MLX90393_I2C_ADDRESS                    0x0C        // address pin A0,A1 low (GND), default for MLX90393
+// #define MLX90393_I2C_ADDRESS                    (0x18 >> 1) // 7-bit address pin A0,A1 low (GND), default for MLX90393
 
   enum cmd
   {
