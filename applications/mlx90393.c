@@ -1194,11 +1194,11 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
 
     if (res == RT_EOK)
     {
-        rt_kprintf("Device init succeed!");
+        rt_kprintf("Device init succeed!\r\n");
     }
     else
     {
-        rt_kprintf("Error in device initialization!");
+        rt_kprintf("Error in device initialization!\r\n");
     }
     return dev;
 
@@ -1327,6 +1327,16 @@ static void mlx90393(int argc, char **argv)
         {
             mlx90393_write_reg(dev, atoi(argv[2]), atoi(argv[3]));
         }
+        else if (!strcmp(argv[1], "sm"))
+        {
+            mlx90393_start_measurement(dev, X_FLAG | Y_FLAG | Z_FLAG | T_FLAG);
+        }        
+        else if (!strcmp(argv[1], "rm"))
+        {
+            struct mlx90393_txyz txyz;
+            mlx90393_read_measurement(dev, X_FLAG | Y_FLAG | Z_FLAG | T_FLAG, &txyz);
+            rt_kprintf("t = 0x%x x = 0x%x y = 0x%x z = 0x%x\r\n", txyz.t, txyz.x, txyz.y, txyz.z);
+        }                
         else if (!strcmp(argv[1], "setup"))
         {
             mlx90393_setup(dev);
