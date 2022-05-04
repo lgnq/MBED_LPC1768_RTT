@@ -68,6 +68,19 @@ enum mlx90393_cmd
     MPU6XXX_SLEEP        /* Sleep mode */
 };
 
+/** Gain settings for CONF1 register. */
+typedef enum mlx90393_gain 
+{
+    MLX90393_GAIN_5X = (0x00),
+    MLX90393_GAIN_4X,
+    MLX90393_GAIN_3X,
+    MLX90393_GAIN_2_5X,
+    MLX90393_GAIN_2X,
+    MLX90393_GAIN_1_67X,
+    MLX90393_GAIN_1_33X,
+    MLX90393_GAIN_1X
+} mlx90393_gain_t;
+
 union mlx90393_status
 {
     struct
@@ -295,5 +308,7 @@ rt_err_t mlx90393_get_gyro_offset(struct mlx90393_device *dev, struct mlx90393_3
 rt_err_t mlx90393_nop(struct mlx90393_device *dev);
 rt_err_t mlx90393_exit(struct mlx90393_device *dev);
 rt_err_t mlx90393_reset(struct mlx90393_device *dev);
+
+rt_int8_t mlx90393_get_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t *gain);
 
 #endif

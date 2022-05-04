@@ -466,7 +466,13 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
 
         if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
         {
+            *val = ((uint16_t)read_buffer[1])<<8 | read_buffer[2];
+            res = RT_EOK;
+        }
+        else
+        {
             status.byte_val = read_buffer[0];
+            
             rt_kprintf("status = 0x%x\r\n", status.byte_val);
             rt_kprintf("[BIT7] BURST_MODE = 0x%x - MLX90393 works in Burst mode\r\n", status.burst_mode);
             rt_kprintf("[BIT6] WOC_MODE   = 0x%x - MLX90393 works in Wake On Change mode\r\n", status.woc_mode);
@@ -477,11 +483,6 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
             rt_kprintf("[BIT1] D1         = 0x%x - The number of response bytes correspond to 2*D[1:0]+2\r\n", status.d1);
             rt_kprintf("[BIT0] D0         = 0x%x - The number of response bytes correspond to 2*D[1:0]+2\r\n\r\n", status.d0);
 
-            *val = ((uint16_t)read_buffer[1])<<8 | read_buffer[2];
-            res = RT_EOK;
-        }
-        else
-        {
             res = -RT_ERROR;
         }
 #endif
@@ -740,19 +741,42 @@ uint8_t mlx90393_set_hallconf(struct mlx90393_device *dev, uint8_t hallconf)
     return (status1) | (status2);
 }
 
-uint8_t mlx90393_set_gain_sel(struct mlx90393_device *dev, uint8_t gain)
+rt_int8_t mlx90393_set_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t gain)
 {
+    rt_int8_t res = 0;
+
     uint16_t register_val;
     union mlx90393_register0 reg;
 
-    uint8_t status1 = mlx90393_read_reg(dev, 0, &register_val);
-    reg.word_val = register_val;
-    rt_kprintf("reg0 = 0x%x\r\n", reg.word_val);
-    reg.gain_sel = gain;
-    rt_kprintf("reg0 = 0x%x\r\n", reg.word_val);
-    uint8_t status2 = mlx90393_write_reg(dev, 0, reg.word_val);
+    res = mlx90393_read_reg(dev, 0, &register_val);
+    if (res == -RT_ERROR)
+        return res;
 
-    return (status1) | (status2);
+    reg.word_val = register_val;
+    reg.gain_sel = gain;
+    
+    res = mlx90393_write_reg(dev, 0, reg.word_val);
+    if (res == -RT_ERROR)
+        return res;
+
+    return res;
+}
+
+rt_int8_t mlx90393_get_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t *gain)
+{
+    rt_int8_t res = 0;
+
+    uint16_t register_val;
+    union mlx90393_register0 reg;
+
+    res = mlx90393_read_reg(dev, 0, &register_val);
+    if (res == -RT_ERROR)
+        return res;
+
+    reg.word_val = register_val;
+    *gain = reg.gain_sel;
+    
+    return res;
 }
 
 uint8_t mlx90393_set_burst_sel(struct mlx90393_device *dev, uint8_t burst_sel)
@@ -1335,8 +1359,26 @@ static void mlx90393(int argc, char **argv)
         {
             struct mlx90393_txyz txyz;
             mlx90393_read_measurement(dev, X_FLAG | Y_FLAG | Z_FLAG | T_FLAG, &txyz);
-            rt_kprintf("t = 0x%x x = 0x%x y = 0x%x z = 0x%x\r\n", txyz.t, txyz.x, txyz.y, txyz.z);
+            rt_kprintf("t = %d x = 0x%x y = 0x%x z = 0x%x\r\n", txyz.t, txyz.x, txyz.y, txyz.z);
         }                
+        else if (!strcmp(argv[1], "set_gain"))
+        {
+            mlx90393_gain_t gain;
+
+            mlx90393_get_gain_sel(dev, &gain);
+            rt_kprintf("old gain is 0x%x\r\n", gain);
+
+            mlx90393_set_gain_sel(dev, atoi(argv[2]));
+
+            mlx90393_get_gain_sel(dev, &gain);
+            rt_kprintf("new gain is 0x%x\r\n", gain);            
+        }                
+        else if (!strcmp(argv[1], "get_gain"))
+        {
+            mlx90393_gain_t gain;
+            mlx90393_get_gain_sel(dev, &gain);
+            rt_kprintf("gain is 0x%x\r\n", gain);
+        }                                
         else if (!strcmp(argv[1], "setup"))
         {
             mlx90393_setup(dev);
