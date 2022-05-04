@@ -68,6 +68,13 @@ enum mlx90393_cmd
     MPU6XXX_SLEEP        /* Sleep mode */
 };
 
+/** HALLCONF settings for CONF1 register. */
+typedef enum mlx90393_hallconf 
+{
+    MLX90393_HALLCONF_0 = (0x0),
+    MLX90393_HALLCONF_C = (0xC),
+} mlx90393_hallconf_t;
+
 /** Gain settings for CONF1 register. */
 typedef enum mlx90393_gain 
 {

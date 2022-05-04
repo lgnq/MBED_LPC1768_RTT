@@ -738,17 +738,24 @@ rt_err_t mlx90393_reset(struct mlx90393_device *dev)
     return res;
 }
 
-uint8_t mlx90393_set_hallconf(struct mlx90393_device *dev, uint8_t hallconf)
+rt_err_t mlx90393_set_hallconf(struct mlx90393_device *dev, uint8_t hallconf)
 {
+    rt_err_t res = 0;
+
     uint16_t register_val;
     union mlx90393_register0 reg;
 
-    uint8_t status1 = mlx90393_read_reg(dev, 0, &register_val);
+    res = mlx90393_read_reg(dev, 0, &register_val);
+    if (res == -RT_ERROR)
+        return res;
+
     reg.word_val = register_val;
     reg.hallconf = hallconf;
-    uint8_t status2 = mlx90393_write_reg(dev, 0, reg.word_val);
-
-    return (status1) | (status2);
+    res = mlx90393_write_reg(dev, 0, reg.word_val);
+    if (res == -RT_ERROR)
+        return res;
+        
+    return res;
 }
 
 rt_err_t mlx90393_set_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t gain)
@@ -883,30 +890,78 @@ rt_err_t mlx90393_get_resolution(struct mlx90393_device *dev, mlx90393_resolutio
     return res;
 }
 
-uint8_t mlx90393_set_oversampling(struct mlx90393_device *dev, uint8_t osr)
+rt_err_t mlx90393_set_oversampling(struct mlx90393_device *dev, mlx90393_oversampling_t osr)
 {
+    rt_err_t res = 0;
+
     uint16_t register_val;
     union mlx90393_register2 reg;
 
-    uint8_t status1 = mlx90393_read_reg(dev, 2, &register_val);
+    res = mlx90393_read_reg(dev, 2, &register_val);
+    if (res == -RT_ERROR)
+        return res;
+
     reg.word_val = register_val;
     reg.osr = osr;
-    uint8_t status2 = mlx90393_write_reg(dev, 2, reg.word_val);
+    res = mlx90393_write_reg(dev, 2, reg.word_val);
+    if (res == -RT_ERROR)
+        return res;
 
-    return (status1) | (status2);
+    return res;
 }
 
-uint8_t mlx90393_set_digital_filtering(struct mlx90393_device *dev, uint8_t dig_filt)
+rt_err_t mlx90393_get_oversampling(struct mlx90393_device *dev, mlx90393_oversampling_t *osr)
 {
+    rt_err_t res = 0;
+
     uint16_t register_val;
     union mlx90393_register2 reg;
 
-    uint8_t status1 = mlx90393_read_reg(dev, 2, &register_val);
+    res = mlx90393_read_reg(dev, 2, &register_val);
+    if (res == -RT_ERROR)
+        return res;
+
+    reg.word_val = register_val;
+    *osr = reg.osr;
+        
+    return res;
+}
+
+rt_err_t mlx90393_set_digital_filtering(struct mlx90393_device *dev, mlx90393_filter_t dig_filt)
+{
+    rt_err_t res = 0;
+
+    uint16_t register_val;
+    union mlx90393_register2 reg;
+
+    res = mlx90393_read_reg(dev, 2, &register_val);
+    if (res == -RT_ERROR)
+        return res;
+
     reg.word_val = register_val;
     reg.dig_filt = dig_filt;
-    uint8_t status2 = mlx90393_write_reg(dev, 2, reg.word_val);
+    res = mlx90393_write_reg(dev, 2, reg.word_val);
+    if (res == -RT_ERROR)
+        return res;
 
-    return (status1) | (status2);
+    return res;
+}
+
+rt_err_t mlx90393_get_digital_filtering(struct mlx90393_device *dev, mlx90393_filter_t *dig_filt)
+{
+    rt_err_t res = 0;
+
+    uint16_t register_val;
+    union mlx90393_register2 reg;
+
+    res = mlx90393_read_reg(dev, 2, &register_val);
+    if (res == -RT_ERROR)
+        return res;
+
+    reg.word_val = register_val;
+    *dig_filt = reg.dig_filt;
+
+    return res;
 }
 
 uint8_t mlx90393_set_offset_x(struct mlx90393_device *dev, uint16_t offset)
