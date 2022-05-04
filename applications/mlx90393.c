@@ -466,11 +466,6 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
 
         if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
         {
-            *val = ((uint16_t)read_buffer[1])<<8 | read_buffer[2];
-            res = RT_EOK;
-        }
-        else
-        {
             status.byte_val = read_buffer[0];
             
             rt_kprintf("status = 0x%x\r\n", status.byte_val);
@@ -483,6 +478,12 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
             rt_kprintf("[BIT1] D1         = 0x%x - The number of response bytes correspond to 2*D[1:0]+2\r\n", status.d1);
             rt_kprintf("[BIT0] D0         = 0x%x - The number of response bytes correspond to 2*D[1:0]+2\r\n\r\n", status.d0);
 
+            *val = ((uint16_t)read_buffer[1])<<8 | read_buffer[2];
+
+            res = RT_EOK;
+        }
+        else
+        {
             res = -RT_ERROR;
         }
 #endif
@@ -542,7 +543,16 @@ static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, 
         if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
         {
             status.byte_val = read_buffer;
-            rt_kprintf("status = 0x%x, BIT4(ERROR) = %d\r\n", status.byte_val, status.error);
+            
+            rt_kprintf("status = 0x%x\r\n", status.byte_val);
+            rt_kprintf("[BIT7] BURST_MODE = 0x%x - MLX90393 works in Burst mode\r\n", status.burst_mode);
+            rt_kprintf("[BIT6] WOC_MODE   = 0x%x - MLX90393 works in Wake On Change mode\r\n", status.woc_mode);
+            rt_kprintf("[BIT5] SM_MODE    = 0x%x - MLX90393 works in Single measurement mode\r\n", status.sm_mode);
+            rt_kprintf("[BIT4] ERROR      = 0x%x - ECC_ERROR or command is rejected\r\n", status.error);
+            rt_kprintf("[BIT3] SED        = 0x%x - a bit error in the non-volatile memory has been corrected\r\n", status.sed);
+            rt_kprintf("[BIT2] RS         = 0x%x - Reset bit\r\n", status.rs);
+            rt_kprintf("[BIT1] D1         = 0x%x - The number of response bytes correspond to 2*D[1:0]+2\r\n", status.d1);
+            rt_kprintf("[BIT0] D0         = 0x%x - The number of response bytes correspond to 2*D[1:0]+2\r\n\r\n", status.d0);
 
             res = RT_EOK;
         }
