@@ -1373,19 +1373,12 @@ static void mlx90393(int argc, char **argv)
         }                
         else if (!strcmp(argv[1], "set_gain"))
         {
-            mlx90393_gain_t gain;
-
-            mlx90393_get_gain_sel(dev, &gain);
-            rt_kprintf("old gain is 0x%x\r\n", gain);
-
             mlx90393_set_gain_sel(dev, atoi(argv[2]));
-
-            mlx90393_get_gain_sel(dev, &gain);
-            rt_kprintf("new gain is 0x%x\r\n", gain);            
         }                
         else if (!strcmp(argv[1], "get_gain"))
         {
             mlx90393_gain_t gain;
+
             mlx90393_get_gain_sel(dev, &gain);
             rt_kprintf("gain is 0x%x\r\n", gain);
         }                                
