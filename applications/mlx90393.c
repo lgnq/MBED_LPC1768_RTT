@@ -434,7 +434,7 @@ rt_err_t mlx90393_read_measurement(struct mlx90393_device *dev, rt_int8_t zyxt, 
  */
 static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, rt_uint16_t *val)
 {
-    rt_int8_t res = 0;
+    rt_err_t res = 0;
     union mlx90393_status status;
 
 #ifdef RT_USING_I2C
@@ -512,7 +512,7 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
  */
 static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, rt_uint16_t data)
 {
-    rt_int8_t res = 0;
+    rt_err_t res = 0;
     union mlx90393_status status;
 
 #ifdef RT_USING_I2C
@@ -751,9 +751,9 @@ uint8_t mlx90393_set_hallconf(struct mlx90393_device *dev, uint8_t hallconf)
     return (status1) | (status2);
 }
 
-rt_int8_t mlx90393_set_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t gain)
+rt_err_t mlx90393_set_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t gain)
 {
-    rt_int8_t res = 0;
+    rt_err_t res = 0;
 
     uint16_t register_val;
     union mlx90393_register0 reg;
@@ -772,9 +772,9 @@ rt_int8_t mlx90393_set_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t gai
     return res;
 }
 
-rt_int8_t mlx90393_get_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t *gain)
+rt_err_t mlx90393_get_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t *gain)
 {
-    rt_int8_t res = 0;
+    rt_err_t res = 0;
 
     uint16_t register_val;
     union mlx90393_register0 reg;
