@@ -81,6 +81,37 @@ typedef enum mlx90393_gain
     MLX90393_GAIN_1X
 } mlx90393_gain_t;
 
+/** Resolution settings for CONF3 register. */
+typedef enum mlx90393_resolution 
+{
+    MLX90393_RES_16,
+    MLX90393_RES_17,
+    MLX90393_RES_18,
+    MLX90393_RES_19,
+} mlx90393_resolution_t;
+
+/** Digital filter settings for CONF3 register. */
+typedef enum mlx90393_filter 
+{
+    MLX90393_FILTER_0,
+    MLX90393_FILTER_1,
+    MLX90393_FILTER_2,
+    MLX90393_FILTER_3,
+    MLX90393_FILTER_4,
+    MLX90393_FILTER_5,
+    MLX90393_FILTER_6,
+    MLX90393_FILTER_7,
+} mlx90393_filter_t;
+
+/** Oversampling settings for CONF3 register. */
+typedef enum mlx90393_oversampling 
+{
+    MLX90393_OSR_0,
+    MLX90393_OSR_1,
+    MLX90393_OSR_2,
+    MLX90393_OSR_3,
+} mlx90393_oversampling_t;
+
 union mlx90393_status
 {
     struct

@@ -841,19 +841,46 @@ uint8_t mlx90393_set_temperature_compensation(struct mlx90393_device *dev, uint8
     return (status1) | (status2);
 }
 
-uint8_t mlx90393_set_resolution(struct mlx90393_device *dev, uint8_t res_x, uint8_t res_y, uint8_t res_z)
+rt_err_t mlx90393_set_resolution(struct mlx90393_device *dev, mlx90393_resolution_t res_x, mlx90393_resolution_t res_y, mlx90393_resolution_t res_z)
 {
+    rt_err_t res = 0;
+
     uint16_t register_val;
     union mlx90393_register2 reg;
 
-    uint8_t status1 = mlx90393_read_reg(dev, 2, &register_val);
+    res = mlx90393_read_reg(dev, 2, &register_val);
+    if (res == -RT_ERROR)
+        return res;
+
     reg.word_val = register_val;
     reg.res_x = res_x;
     reg.res_y = res_y;
     reg.res_z = res_z;
-    uint8_t status2 = mlx90393_write_reg(dev, 2, reg.word_val);
+    
+    res = mlx90393_write_reg(dev, 2, reg.word_val);
+    if (res == -RT_ERROR)
+        return res;
 
-    return (status1) | (status2);
+    return res;
+}
+
+rt_err_t mlx90393_get_resolution(struct mlx90393_device *dev, mlx90393_resolution_t *res_x, mlx90393_resolution_t *res_y, mlx90393_resolution_t *res_z)
+{
+    rt_err_t res = 0;
+
+    uint16_t register_val;
+    union mlx90393_register2 reg;
+
+    res = mlx90393_read_reg(dev, 2, &register_val);
+    if (res == -RT_ERROR)
+        return res;
+
+    reg.word_val = register_val;
+    *res_x = reg.res_x;
+    *res_y = reg.res_y;
+    *res_z = reg.res_z;
+    
+    return res;
 }
 
 uint8_t mlx90393_set_oversampling(struct mlx90393_device *dev, uint8_t osr)
@@ -1382,6 +1409,19 @@ static void mlx90393(int argc, char **argv)
             mlx90393_get_gain_sel(dev, &gain);
             rt_kprintf("gain is 0x%x\r\n", gain);
         }                                
+        else if (!strcmp(argv[1], "set_resolution"))
+        {
+            mlx90393_set_resolution(dev, atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
+        }                
+        else if (!strcmp(argv[1], "get_resolution"))
+        {
+            mlx90393_resolution_t x;
+            mlx90393_resolution_t y;
+            mlx90393_resolution_t z;
+
+            mlx90393_get_resolution(dev, &x, &y, &z);
+            rt_kprintf("resolution is 0x%x 0x%x 0x%x\r\n", x, y, z);
+        }                                        
         else if (!strcmp(argv[1], "setup"))
         {
             mlx90393_setup(dev);
