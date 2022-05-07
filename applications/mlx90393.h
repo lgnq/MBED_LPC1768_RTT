@@ -414,5 +414,6 @@ rt_err_t mlx90393_exit(struct mlx90393_device *dev);
 rt_err_t mlx90393_reset(struct mlx90393_device *dev);
 
 rt_err_t mlx90393_get_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t *gain);
+rt_err_t mlx90393_get_resolution(struct mlx90393_device *dev, mlx90393_resolution_t *res_x, mlx90393_resolution_t *res_y, mlx90393_resolution_t *res_z);
 
 #endif
