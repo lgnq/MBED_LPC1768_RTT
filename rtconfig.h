@@ -65,6 +65,8 @@
 // <section name="RT_USING_DEVICE" description="Using Device Driver Framework" default="true" >
 #define RT_USING_DEVICE
 
+#define RT_USING_PIN
+
 #define RT_USING_I2C
 #define BSP_USING_I2C0
 #define BSP_USING_I2C2

@@ -15,6 +15,7 @@
 
 #include "led.h"
 #include "drv_uart.h"
+#include "drv_pin.h"
 #include "drv_i2c.h"
 #include "board.h"
 #include "LPC17xx.h"
@@ -68,6 +69,10 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_UART0
 	rt_hw_uart_init();
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+#ifdef RT_USING_PIN
+	rt_hw_pin_init();
 #endif
 
 #ifdef RT_USING_I2C
