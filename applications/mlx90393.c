@@ -289,7 +289,7 @@ rt_err_t mlx90393_start_measurement(struct mlx90393_device *dev, rt_int8_t zyxt)
         write_buffer[0] = (CMD_START_MEASUREMENT)|(zyxt);
 
         msgs[0].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[0].flags = RT_I2C_WR;        /* Write flag */
+        msgs[0].flags = RT_I2C_WR | RT_I2C_NO_STOP;        /* Write flag */
         msgs[0].buf   = write_buffer;     /* Slave register address */
         msgs[0].len   = 1;                /* Number of bytes sent */
 
@@ -425,17 +425,17 @@ rt_err_t mlx90393_read_measurement(struct mlx90393_device *dev, rt_int8_t zyxt, 
 
 rt_err_t mlx90393_convert_measurement(struct mlx90393_device *dev, struct mlx90393_txyz txyz)
 {
-    mlx90393_resolution_t res_x;
-    mlx90393_resolution_t res_y;
-    mlx90393_resolution_t res_z;
+    mlx90393_resolution_t res_x = MLX90393_RES_18;
+    mlx90393_resolution_t res_y = MLX90393_RES_18;
+    mlx90393_resolution_t res_z = MLX90393_RES_18;
 
-    mlx90393_gain_t gain;
+    mlx90393_gain_t gain = 3;
 
     float x, y, z;
 
-    mlx90393_get_resolution(dev, &res_x, &res_y, &res_z);
+    // mlx90393_get_resolution(dev, &res_x, &res_y, &res_z);
 
-    mlx90393_get_gain_sel(dev, &gain);
+    // mlx90393_get_gain_sel(dev, &gain);
 
     if (res_x == MLX90393_RES_18)
         txyz.x -= 0x8000;
