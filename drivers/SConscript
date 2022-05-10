@@ -15,7 +15,7 @@ if GetDepend(['RT_USING_PIN']):
     src += ['drv_pin.c']
 
 if GetDepend(['RT_USING_I2C']):
-    src += ['drv_i2c.c']
+    src += ['drv_soft_i2c.c']
 
 CPPPATH = [cwd]
 
