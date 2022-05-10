@@ -71,7 +71,7 @@ static rt_int32_t gpio_get_scl(void *data)
 {
     struct lpc_i2c_bit_data *bd = data;
 
-    return GPIO_ReadValue(bd->scl.port) & (0x01<<bd->sda.pin);
+    return GPIO_ReadValue(bd->scl.port) & (0x01<<bd->scl.pin);
 }
 
 static void gpio_udelay(rt_uint32_t us)
@@ -203,7 +203,7 @@ int rt_hw_i2c_init(void)
         /*
         * Init I2C pin connect
         */
-        PinCfg.OpenDrain = 0;
+        PinCfg.OpenDrain = 1;
         PinCfg.Pinmode = 0;
 
         PinCfg.Funcnum = 0;
