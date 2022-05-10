@@ -433,9 +433,9 @@ rt_err_t mlx90393_convert_measurement(struct mlx90393_device *dev, struct mlx903
 
     float x, y, z;
 
-    // mlx90393_get_resolution(dev, &res_x, &res_y, &res_z);
+    mlx90393_get_resolution(dev, &res_x, &res_y, &res_z);
 
-    // mlx90393_get_gain_sel(dev, &gain);
+    mlx90393_get_gain_sel(dev, &gain);
 
     if (res_x == MLX90393_RES_18)
         txyz.x -= 0x8000;
