@@ -10,7 +10,6 @@
 
 #include <board.h>
 #include "drv_soft_i2c.h"
-// #include "drv_config.h"
 
 #ifdef RT_USING_I2C
 
@@ -53,9 +52,6 @@ static void lpc17xx_i2c_gpio_init(struct lpc17xx_i2c *i2c)
     // rt_pin_mode(cfg->scl, PIN_MODE_OUTPUT);
     // rt_pin_mode(cfg->sda, PIN_MODE_OUTPUT);
 
-    rt_pin_mode(53, PIN_MODE_OUTPUT);    //LED2 SDA
-    rt_pin_mode(55, PIN_MODE_OUTPUT);    //LED3 SCL
-
     rt_pin_write(cfg->scl, PIN_HIGH);
     rt_pin_write(cfg->sda, PIN_HIGH);
 }
@@ -72,14 +68,11 @@ static void lpc17xx_set_sda(void *data, rt_int32_t state)
     if (state)
     {
         rt_pin_write(cfg->sda, PIN_HIGH);
-        rt_pin_write(53, PIN_HIGH);
     }
     else
     {
         rt_pin_write(cfg->sda, PIN_LOW);
-        rt_pin_write(53, PIN_LOW);
     }
-    // rt_kprintf("D%d ", state);
 }
 
 /**
@@ -94,14 +87,11 @@ static void lpc17xx_set_scl(void *data, rt_int32_t state)
     if (state)
     {
         rt_pin_write(cfg->scl, PIN_HIGH);
-        rt_pin_write(55, PIN_HIGH);
     }
     else
     {
         rt_pin_write(cfg->scl, PIN_LOW);
-        rt_pin_write(55, PIN_LOW);
     }
-    // rt_kprintf("C%d ", state);
 }
 
 /**
@@ -115,7 +105,7 @@ static rt_int32_t lpc17xx_get_sda(void *data)
 
     struct lpc17xx_soft_i2c_config* cfg = (struct lpc17xx_soft_i2c_config*)data;
     pin_val = rt_pin_read(cfg->sda);
-    rt_kprintf("SDA PIN[%d] = %d\r\n", cfg->sda, pin_val);
+    // rt_kprintf("SDA PIN[%d] = %d\r\n", cfg->sda, pin_val);
 
     return pin_val;
 }
@@ -131,7 +121,7 @@ static rt_int32_t lpc17xx_get_scl(void *data)
 
     struct lpc17xx_soft_i2c_config* cfg = (struct lpc17xx_soft_i2c_config*)data;
     pin_val = rt_pin_read(cfg->scl);
-    rt_kprintf("SCL PIN[%d] = %d\r\n", cfg->scl, pin_val);
+    // rt_kprintf("SCL PIN[%d] = %d\r\n", cfg->scl, pin_val);
 
     return pin_val;
 }

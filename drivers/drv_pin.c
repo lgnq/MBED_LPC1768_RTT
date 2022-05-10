@@ -131,7 +131,7 @@ static int lpc17xx_pin_read(rt_device_t dev, rt_base_t pin)
     bit_value = PIN_NO(pin);
 
     value = GPIO_ReadValue(port_num);
-    rt_kprintf("0x%x\r\n", value);
+    // rt_kprintf("0x%x\r\n", value);
     if (value & 1<<bit_value)
         value = PIN_HIGH;
     else
