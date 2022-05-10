@@ -18,6 +18,7 @@
 #include "drv_pin.h"
 #include <drivers/pin.h>
 #include "lpc17xx_gpio.h"
+#include "lpc17xx_pinsel.h"
 
 #ifdef RT_USING_PIN
 
@@ -130,10 +131,11 @@ static int lpc17xx_pin_read(rt_device_t dev, rt_base_t pin)
     bit_value = PIN_NO(pin);
 
     value = GPIO_ReadValue(port_num);
+    rt_kprintf("0x%x\r\n", value);
     if (value & 1<<bit_value)
         value = PIN_HIGH;
     else
-        value = PIN_HIGH;
+        value = PIN_LOW;
 
     return value;
 }
@@ -143,35 +145,60 @@ static void lpc17xx_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     uint8_t port_num;
     uint32_t bit_value;
 
+    PINSEL_CFG_Type PinCfg;
+
     port_num  = PIN_PORT(pin); 
     bit_value = PIN_NO(pin);
+
+    PinCfg.Funcnum = 0;
+    PinCfg.Pinnum = bit_value;
+    PinCfg.Portnum = port_num;
 
     if (mode == PIN_MODE_OUTPUT)
     {
         /* output setting */
         GPIO_SetDir(port_num, 1<<bit_value, 1);
+
+        PinCfg.OpenDrain = 0;
+        PinCfg.Pinmode = 0;
     }
     else if (mode == PIN_MODE_INPUT)
     {
         /* input setting: not pull. */
         GPIO_SetDir(port_num, 1<<bit_value, 0);
+    
+        PinCfg.OpenDrain = 0;
+        PinCfg.Pinmode = 0;    
     }
     else if (mode == PIN_MODE_INPUT_PULLUP)
     {
         /* input setting: pull up. */
         GPIO_SetDir(port_num, 1<<bit_value, 0);
+
+        PinCfg.OpenDrain = 0;
+        PinCfg.Pinmode = 0;        
     }
     else if (mode == PIN_MODE_INPUT_PULLDOWN)
     {
         /* input setting: pull down. */
         GPIO_SetDir(port_num, 1<<bit_value, 0);
 
+        PinCfg.OpenDrain = 0;
+        PinCfg.Pinmode = 2;        
+
     }
     else if (mode == PIN_MODE_OUTPUT_OD)
     {
+        rt_kprintf("PIN_MODE_OUTPUT_OD\r\n");
+
         /* output setting: od. */
         GPIO_SetDir(port_num, 1<<bit_value, 1);
+
+        PinCfg.OpenDrain = 1;
+        PinCfg.Pinmode = 2;        
     }
+
+    PINSEL_ConfigPin(&PinCfg);        
 }
 
 // rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
