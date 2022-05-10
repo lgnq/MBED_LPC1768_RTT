@@ -189,13 +189,11 @@ static void lpc17xx_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
     else if (mode == PIN_MODE_OUTPUT_OD)
     {
-        rt_kprintf("PIN_MODE_OUTPUT_OD\r\n");
-
         /* output setting: od. */
         GPIO_SetDir(port_num, 1<<bit_value, 1);
 
         PinCfg.OpenDrain = 1;
-        PinCfg.Pinmode = 2;        
+        PinCfg.Pinmode = 0;        
     }
 
     PINSEL_ConfigPin(&PinCfg);        
