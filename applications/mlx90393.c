@@ -289,7 +289,7 @@ rt_err_t mlx90393_start_measurement(struct mlx90393_device *dev, rt_int8_t zyxt)
         write_buffer[0] = (CMD_START_MEASUREMENT)|(zyxt);
 
         msgs[0].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[0].flags = RT_I2C_WR | RT_I2C_NO_STOP;        /* Write flag */
+        msgs[0].flags = RT_I2C_WR;        /* Write flag */
         msgs[0].buf   = write_buffer;     /* Slave register address */
         msgs[0].len   = 1;                /* Number of bytes sent */
 
@@ -491,7 +491,7 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
         write_buffer[1] = reg << 2;
 
         msgs[0].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[0].flags = RT_I2C_WR | RT_I2C_NO_STOP;        /* Write flag */
+        msgs[0].flags = RT_I2C_WR;        /* Write flag */
         msgs[0].buf   = write_buffer;     /* Slave register address */
         msgs[0].len   = 2;                /* Number of bytes sent */
 
