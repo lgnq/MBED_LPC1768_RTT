@@ -85,6 +85,62 @@ static void gpio_udelay(rt_uint32_t us)
     }
 }
 
+int rt_hw_i2c_init(void)
+{
+    /* register I2C0: SCL/P0_28 SDA/P0_27 */
+    /* register I2C1: SCL/P0_01 SDA/P0_00 */
+    /* register I2C2: SCL/P0_11 SDA/P0_10 */
+    {
+        static struct rt_i2c_bus_device i2c_device;
+
+        static const struct lpc_i2c_bit_data _i2c_bdata =
+        {
+            /* SCL2 */ {0, 11},
+            /* SDA2 */ {0, 10},
+        };
+
+        static const struct rt_i2c_bit_ops _i2c_bit_ops =
+        {
+            (void*)&_i2c_bdata,
+            gpio_set_sda,
+            gpio_set_scl,
+            gpio_get_sda,
+            gpio_get_scl,
+
+            gpio_udelay,
+
+            5,
+            100
+        };
+
+        GPIO_SetDir(_i2c_bdata.sda.port, (1<<_i2c_bdata.sda.pin), 1);
+        GPIO_SetDir(_i2c_bdata.scl.port, (1<<_i2c_bdata.scl.pin), 1);
+
+        PINSEL_CFG_Type PinCfg;
+
+        /*
+        * Init I2C pin connect
+        */
+        PinCfg.OpenDrain = 1;
+        PinCfg.Pinmode = 0;
+
+        PinCfg.Funcnum = 0;
+        PinCfg.Pinnum = _i2c_bdata.sda.pin;
+        PinCfg.Portnum = _i2c_bdata.sda.port;
+        PINSEL_ConfigPin(&PinCfg);
+        PinCfg.Pinnum = _i2c_bdata.scl.pin;
+        PINSEL_ConfigPin(&PinCfg);        
+
+        i2c_device.priv = (void *)&_i2c_bit_ops;
+        rt_i2c_bit_add_bus(&i2c_device, "i2c2");
+
+        rt_kprintf("software simulation %s init done, pin scl: %d, pin sda %d", "i2c2", _i2c_bdata.scl.pin, _i2c_bdata.sda.pin);
+    } /* register I2C */
+
+    return 0;
+}
+INIT_DEVICE_EXPORT(rt_hw_i2c_init);
+
 #else /* RT_USING_I2C_BITOPS */
 
 struct lpc_i2c_bus
@@ -150,63 +206,8 @@ static const struct rt_i2c_bus_device_ops i2c_ops =
     RT_NULL
 };
 
-#endif /* RT_USING_I2C_BITOPS */
-
 int rt_hw_i2c_init(void)
 {
-#ifdef RT_USING_I2C_BITOPS
-    /* register I2C0: SCL/P0_28 SDA/P0_27 */
-    /* register I2C1: SCL/P0_01 SDA/P0_00 */
-    /* register I2C2: SCL/P0_11 SDA/P0_10 */
-    {
-        static struct rt_i2c_bus_device i2c_device;
-
-        static const struct lpc_i2c_bit_data _i2c_bdata =
-        {
-            /* SCL2 */ {0, 11},
-            /* SDA2 */ {0, 10},
-        };
-
-        static const struct rt_i2c_bit_ops _i2c_bit_ops =
-        {
-            (void*)&_i2c_bdata,
-            gpio_set_sda,
-            gpio_set_scl,
-            gpio_get_sda,
-            gpio_get_scl,
-
-            gpio_udelay,
-
-            5,
-            100
-        };
-
-        GPIO_SetDir(_i2c_bdata.sda.port, (1<<_i2c_bdata.sda.pin), 1);
-        GPIO_SetDir(_i2c_bdata.scl.port, (1<<_i2c_bdata.scl.pin), 1);
-
-        PINSEL_CFG_Type PinCfg;
-
-        /*
-        * Init I2C pin connect
-        */
-        PinCfg.OpenDrain = 1;
-        PinCfg.Pinmode = 0;
-
-        PinCfg.Funcnum = 0;
-        PinCfg.Pinnum = _i2c_bdata.sda.pin;
-        PinCfg.Portnum = _i2c_bdata.sda.port;
-        PINSEL_ConfigPin(&PinCfg);
-        PinCfg.Pinnum = _i2c_bdata.scl.pin;
-        PINSEL_ConfigPin(&PinCfg);        
-
-        i2c_device.priv = (void *)&_i2c_bit_ops;
-        rt_i2c_bit_add_bus(&i2c_device, "i2c2");
-
-        rt_kprintf("software simulation %s init done, pin scl: %d, pin sda %d", "i2c2", _i2c_bdata.scl.pin, _i2c_bdata.sda.pin);
-    } /* register I2C */
-
-#else /* RT_USING_I2C_BITOPS */
-
     static struct lpc_i2c_bus lpc_i2c2;
 	PINSEL_CFG_Type PinCfg;
 
@@ -270,10 +271,10 @@ int rt_hw_i2c_init(void)
     lpc_i2c2.I2C = LPC_I2C2;
     rt_i2c_bus_device_register(&lpc_i2c2.parent, "i2c2");
 
-#endif /* RT_USING_I2C_BITOPS */
-
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_i2c_init);
+
+#endif /* RT_USING_I2C_BITOPS */
 
 #endif /* RT_USING_I2C */
