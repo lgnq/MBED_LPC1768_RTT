@@ -46,9 +46,6 @@ static void lpc17xx_i2c_gpio_init(struct lpc17xx_i2c *i2c)
     rt_pin_mode(cfg->scl, PIN_MODE_OUTPUT_OD);
     rt_pin_mode(cfg->sda, PIN_MODE_OUTPUT_OD);
 
-    // rt_pin_mode(cfg->scl, PIN_MODE_OUTPUT);
-    // rt_pin_mode(cfg->sda, PIN_MODE_OUTPUT);
-
     rt_pin_write(cfg->scl, PIN_HIGH);
     rt_pin_write(cfg->sda, PIN_HIGH);
 }
