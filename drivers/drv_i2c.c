@@ -56,7 +56,7 @@ static void gpio_set_scl(void *data, rt_int32_t state)
     else
     {
         //bd->scl.base->B[bd->sda.port][bd->sda.pin] = 0;
-        GPIO_ClearValue(bd->sda.port, 1<<bd->sda.pin);
+        GPIO_ClearValue(bd->sda.port, 1<<bd->scl.pin);
     }
 }
 
@@ -195,8 +195,8 @@ int rt_hw_i2c_init(void)
         // GPIO_WritePinOutput(GPIO, _i2c_bdata.sda.port, _i2c_bdata.sda.pin, 1);
         // GPIO_WritePinOutput(GPIO, _i2c_bdata.scl.port, _i2c_bdata.scl.pin, 1);
 
-        GPIO_SetDir(0, (1<<10), 1);
-        GPIO_SetDir(0, (1<<11), 1);
+        GPIO_SetDir(_i2c_bdata.sda.port, (1<<_i2c_bdata.sda.pin), 1);
+        GPIO_SetDir(_i2c_bdata.scl.port, (1<<_i2c_bdata.scl.pin), 1);
 
         PINSEL_CFG_Type PinCfg;
 
@@ -207,10 +207,10 @@ int rt_hw_i2c_init(void)
         PinCfg.Pinmode = 0;
 
         PinCfg.Funcnum = 0;
-        PinCfg.Pinnum = 10;
-        PinCfg.Portnum = 0;
+        PinCfg.Pinnum = _i2c_bdata.sda.pin;
+        PinCfg.Portnum = _i2c_bdata.sda.port;
         PINSEL_ConfigPin(&PinCfg);
-        PinCfg.Pinnum = 11;
+        PinCfg.Pinnum = _i2c_bdata.scl.pin;
         PINSEL_ConfigPin(&PinCfg);        
 
         i2c_device.priv = (void *)&_i2c_bit_ops;
