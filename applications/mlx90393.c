@@ -423,6 +423,11 @@ rt_err_t mlx90393_read_measurement(struct mlx90393_device *dev, rt_int8_t zyxt, 
     return res;
 }
 
+/*
+    Temperature sensor resolution       = 45.2 LSB/C
+    Temperature sensor output at 25C    = 46244 LSB(16u)
+    MLX90393 datasheet page 12
+ */
 rt_int16_t mlx90393_convert_temperature(rt_uint16_t raw)
 {
     float temperature;
