@@ -438,25 +438,48 @@ rt_err_t mlx90393_convert_measurement(struct mlx90393_device *dev, struct mlx903
     mlx90393_get_gain_sel(dev, &gain);
 
     if (res_x == MLX90393_RES_18)
+    {
         txyz.x -= 0x8000;
+        rt_kprintf("txyz.x - 0x8000 = 0x%x\r\n", txyz.x);
+    }
+
     if (res_x == MLX90393_RES_19)
+    {
         txyz.x -= 0x4000;
+        rt_kprintf("txyz.x - 0x4000 = 0x%x\r\n", txyz.x);
+    }
+
     if (res_y == MLX90393_RES_18)
+    {
         txyz.y -= 0x8000;
+        rt_kprintf("txyz.y - 0x8000 = 0x%x\r\n", txyz.y);
+    }
+
     if (res_y == MLX90393_RES_19)
+    {
         txyz.y -= 0x4000;
+        rt_kprintf("txyz.x - 0x4000 = 0x%x\r\n", txyz.y);
+    }
+
     if (res_z == MLX90393_RES_18)
+    {
         txyz.z -= 0x8000;
+        rt_kprintf("txyz.z - 0x8000 = 0x%x\r\n", txyz.z);
+    }
+
     if (res_z == MLX90393_RES_19)
+    {
         txyz.z -= 0x4000;
+        rt_kprintf("txyz.z - 0x4000 = 0x%x\r\n", txyz.z);
+    }
 
     x = (float)txyz.x * mlx90393_lsb_lookup[0][gain][res_x][0];
     y = (float)txyz.y * mlx90393_lsb_lookup[0][gain][res_y][0];
     z = (float)txyz.z * mlx90393_lsb_lookup[0][gain][res_z][1];
 
     // rt_kprintf("%.3f uT %.3f uT %.3f uT\r\n", x, y, z);
-    rt_kprintf("%xuT %xuT %xuT\r\n", x, y, z);
-    rt_kprintf("%duT %duT %duT\r\n", x*1000, y*1000, z*1000);
+    rt_kprintf("0x%xuT 0x%xuT 0x%xuT\r\n", x, y, z);
+    rt_kprintf("%duT %duT %duT\r\n", (int)x, (int)y, (int)z);
 }
 
 /**
@@ -829,6 +852,8 @@ rt_err_t mlx90393_get_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t *gai
     reg.word_val = register_val;
     *gain = reg.gain_sel;
     
+    rt_kprintf("gain = 0x%x\r\n", *gain);
+
     return res;
 }
 
@@ -923,6 +948,8 @@ rt_err_t mlx90393_get_resolution(struct mlx90393_device *dev, mlx90393_resolutio
     *res_y = reg.res_y;
     *res_z = reg.res_z;
     
+    rt_kprintf("res_x = 0x%x, res_y = 0x%x, res_z = 0x%x\r\n", *res_x, *res_y, *res_z);
+
     return res;
 }
 
@@ -1487,7 +1514,7 @@ static void mlx90393(int argc, char **argv)
         {
             struct mlx90393_txyz txyz;
             mlx90393_read_measurement(dev, X_FLAG | Y_FLAG | Z_FLAG | T_FLAG, &txyz);
-            rt_kprintf("t = %d x = 0x%x y = 0x%x z = 0x%x\r\n", txyz.t, txyz.x, txyz.y, txyz.z);
+            rt_kprintf("t = 0x%x x = 0x%x y = 0x%x z = 0x%x\r\n", txyz.t, txyz.x, txyz.y, txyz.z);
             mlx90393_convert_measurement(dev, txyz);
         }                
         else if (!strcmp(argv[1], "set_gain"))
