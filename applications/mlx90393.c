@@ -423,6 +423,14 @@ rt_err_t mlx90393_read_measurement(struct mlx90393_device *dev, rt_int8_t zyxt, 
     return res;
 }
 
+rt_int16_t mlx90393_convert_temperature(rt_uint16_t raw)
+{
+    float temperature;
+
+    temperature = 25 + (raw - 46244)/45.2;
+    rt_kprintf("t = %d.%d C\r\n", (int)temperature, ((int)(temperature*10))%10);
+}
+
 rt_err_t mlx90393_convert_measurement(struct mlx90393_device *dev, struct mlx90393_txyz txyz)
 {
     mlx90393_resolution_t res_x = MLX90393_RES_18;
@@ -1513,7 +1521,6 @@ static void mlx90393(int argc, char **argv)
         else if (!strcmp(argv[1], "rm"))
         {
             struct mlx90393_txyz txyz;
-            float temperature;
 
             mlx90393_start_measurement(dev, X_FLAG | Y_FLAG | Z_FLAG | T_FLAG);
             
@@ -1522,9 +1529,7 @@ static void mlx90393(int argc, char **argv)
 
             mlx90393_read_measurement(dev, X_FLAG | Y_FLAG | Z_FLAG | T_FLAG, &txyz);
 
-            temperature = 25 + (txyz.t - 46244)/45.2;
-            rt_kprintf("t = %d.%d C x = 0x%x y = 0x%x z = 0x%x\r\n", (int)temperature, ((int)temperature*10)%10, (short)txyz.x, (short)txyz.y, (short)txyz.z);
-
+            mlx90393_convert_temperature(txyz.t);
             mlx90393_convert_measurement(dev, txyz);
         }                
         else if (!strcmp(argv[1], "set_gain"))
