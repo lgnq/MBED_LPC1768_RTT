@@ -289,7 +289,7 @@ union mlx90393_register3
 /* 3-axis data structure */
 struct mlx90393_txyz
 {
-    rt_int16_t t;
+    rt_uint16_t t;
     rt_int16_t x;
     rt_int16_t y;
     rt_int16_t z;
