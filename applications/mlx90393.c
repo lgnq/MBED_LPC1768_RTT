@@ -1254,36 +1254,6 @@ rt_err_t mlx90393_set_param(struct mlx90393_device *dev, enum mlx90393_cmd cmd, 
 }
 
 /**
- * This function gets the data of the gyroscope, unit: deg/10s
- * Here deg/10s means 10 times higher precision than deg/s.
- *
- * @param dev the pointer of device driver structure
- * @param gyro the pointer of 3axes structure for receive data
- *
- * @return the reading status, RT_EOK reprensents  reading the data successfully.
- */
-//rt_err_t mlx90393_get_gyro(struct mlx90393_device *dev, struct mlx90393_3axes *gyro)
-//{
-//    struct mlx90393_3axes tmp;
-//    rt_uint16_t sen;
-//    rt_err_t res;
-//
-//    res = mlx90393_get_gyro_raw(dev, &tmp);
-//    if (res != RT_EOK)
-//    {
-//        return res;
-//    }
-//
-////    sen = MPU6XXX_GYRO_SEN >> dev->config.gyro_range;
-////
-////    gyro->x = (rt_int32_t)tmp.x * 100 / sen;
-////    gyro->y = (rt_int32_t)tmp.y * 100 / sen;
-////    gyro->z = (rt_int32_t)tmp.z * 100 / sen;
-//
-//    return RT_EOK;
-//}
-
-/**
  * This function initialize the mlx90393 device.
  *
  * @param dev_name the name of transfer device
@@ -1355,34 +1325,6 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
         rt_kprintf("Unsupported device:'%s'!", dev_name);
         goto __exit;
     }
-
-    // if (mlx90393_read_regs(dev, MPU6XXX_RA_WHO_AM_I, 1, &reg) != RT_EOK)
-    // {
-    //     rt_kprintf("Failed to read device id!");
-    //     goto __exit;
-    // }
-
-    // dev->id = reg;
-
-    // switch (dev->id)
-    // {
-    // case MPU6050_WHO_AM_I:
-    //     rt_kprintf("Find device: mpu6050!");
-    //     break;
-    // case 0xFF:
-    //     rt_kprintf("No device connection!");
-    //     goto __exit;
-    // default:
-    //     rt_kprintf("Unknown device id: 0x%x!", reg);
-    // }
-
-    // res += mpu6xxx_get_param(dev, MPU6XXX_ACCEL_RANGE, &dev->config.accel_range);
-    // res += mpu6xxx_get_param(dev, MPU6XXX_GYRO_RANGE, &dev->config.gyro_range);
-
-    // res += mpu6xxx_write_bits(dev, MPU6XXX_RA_PWR_MGMT_1, MPU6XXX_PWR1_CLKSEL_BIT, MPU6XXX_PWR1_CLKSEL_LENGTH, MPU6XXX_CLOCK_PLL_XGYRO);
-    // res += mpu6xxx_set_param(dev, MPU6XXX_GYRO_RANGE, MPU6XXX_GYRO_RANGE_250DPS);
-    // res += mpu6xxx_set_param(dev, MPU6XXX_ACCEL_RANGE, MPU6XXX_ACCEL_RANGE_2G);
-    // res += mpu6xxx_set_param(dev, MPU6XXX_SLEEP, MPU6XXX_SLEEP_DISABLE);
 
     if (res == RT_EOK)
     {
