@@ -51,22 +51,16 @@ rt_err_t mlx90393_i2c_cmd(struct mlx90393_device *dev, enum cmd c)
 
 rt_err_t mlx90393_nop(struct mlx90393_device *dev)
 {
-    rt_int8_t res = 0;
-
-#ifdef RT_USING_I2C
-    struct rt_i2c_msg msgs[2];
-
-    uint8_t write_buffer[10];
-    uint8_t read_buffer[10];
-#endif
-
-#ifdef RT_USING_SPI
-    rt_uint8_t tmp;
-#endif
+    rt_err_t res = RT_EOK;
 
     if (dev->bus->type == RT_Device_Class_I2CBUS)
     {
 #ifdef RT_USING_I2C
+        struct rt_i2c_msg msgs[2];
+
+        uint8_t write_buffer[10];
+        uint8_t read_buffer[10];
+
         write_buffer[0] = CMD_NOP;
 
         msgs[0].addr  = dev->i2c_addr;    /* Slave address */
@@ -81,7 +75,6 @@ rt_err_t mlx90393_nop(struct mlx90393_device *dev)
 
         if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
         {
-            //if (buf[0] == 0x00)
             res = RT_EOK;
         }
         else
@@ -90,9 +83,11 @@ rt_err_t mlx90393_nop(struct mlx90393_device *dev)
         }
 #endif
     }
-    else
+    else if (dev->bus->type == RT_Device_Class_SPIDevice)
     {
 #ifdef RT_USING_SPI
+        rt_uint8_t tmp;
+
         //The first bit of the first byte contains the Read/Write bit and indicates the Read (1) or Write (0) operation.
         tmp = reg | 0x80;
 
