@@ -79,6 +79,21 @@ rt_err_t mlx90393_exit(struct mlx90393_device *dev)
     return mlx90393_send_cmd(dev, CMD_EXIT);
 }
 
+rt_err_t mlx90393_memory_recall(struct mlx90393_device *dev)
+{
+    return mlx90393_send_cmd(dev, CMD_MEMORY_RECALL);
+}
+
+rt_err_t mlx90393_memory_store(struct mlx90393_device *dev)
+{
+    return mlx90393_send_cmd(dev, CMD_MEMORY_STORE);
+}
+
+rt_err_t mlx90393_reset(struct mlx90393_device *dev)
+{
+    return mlx90393_send_cmd(dev, CMD_RESET);
+}
+
 rt_err_t mlx90393_start_burst(struct mlx90393_device *dev, rt_int8_t zyxt)
 {
     rt_int8_t res = 0;
@@ -561,21 +576,6 @@ static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, 
     }
 
     return res;
-}
-
-rt_err_t mlx90393_memory_recall(struct mlx90393_device *dev)
-{
-    return mlx90393_send_cmd(dev, CMD_MEMORY_RECALL);
-}
-
-rt_err_t mlx90393_memory_store(struct mlx90393_device *dev)
-{
-    return mlx90393_send_cmd(dev, CMD_MEMORY_STORE);
-}
-
-rt_err_t mlx90393_reset(struct mlx90393_device *dev)
-{
-    return mlx90393_send_cmd(dev, CMD_RESET);
 }
 
 rt_err_t mlx90393_set_hallconf(struct mlx90393_device *dev, uint8_t hallconf)
