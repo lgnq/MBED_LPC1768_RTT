@@ -13,6 +13,9 @@
 
 #include "mlx90393.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 rt_err_t mlx90393_i2c_cmd(struct mlx90393_device *dev, enum cmd c)
 {
     rt_int8_t res = 0;
