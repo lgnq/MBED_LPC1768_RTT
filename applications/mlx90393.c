@@ -71,109 +71,12 @@ rt_err_t mlx90393_send_cmd(struct mlx90393_device *dev, enum cmd c)
 
 rt_err_t mlx90393_nop(struct mlx90393_device *dev)
 {
-    rt_err_t res = RT_EOK;
-
-    if (dev->bus->type == RT_Device_Class_I2CBUS)
-    {
-#ifdef RT_USING_I2C
-        struct rt_i2c_msg msgs[2];
-
-        uint8_t write_buffer[10];
-        uint8_t read_buffer[10];
-
-        write_buffer[0] = CMD_NOP;
-
-        msgs[0].addr  = dev->i2c_addr;    /* I2C Slave address */
-        msgs[0].flags = RT_I2C_WR;        /* Write flag */
-        msgs[0].buf   = write_buffer;     /* Write data pointer */
-        msgs[0].len   = 1;                /* Number of bytes sent */
-
-        msgs[1].addr  = dev->i2c_addr;    /* I2C Slave address */
-        msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = read_buffer;      /* Read data pointer */
-        msgs[1].len   = 1;                /* Number of bytes read */
-
-        if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
-        {
-            res = RT_EOK;
-        }
-        else
-        {
-            res = -RT_ERROR;
-        }
-#endif
-    }
-    else if (dev->bus->type == RT_Device_Class_SPIDevice)
-    {
-#ifdef RT_USING_SPI
-        rt_uint8_t tmp;
-
-        //The first bit of the first byte contains the Read/Write bit and indicates the Read (1) or Write (0) operation.
-        tmp = reg | 0x80;
-
-        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, &tmp, 1, buf);
-#endif
-    }
-    else
-    {
-
-    }
-
-    return res;
+    return mlx90393_send_cmd(dev, CMD_NOP);
 }
 
 rt_err_t mlx90393_exit(struct mlx90393_device *dev)
 {
-    rt_int8_t res = 0;
-
-#ifdef RT_USING_I2C
-    struct rt_i2c_msg msgs[2];
-
-    uint8_t write_buffer[10];
-    uint8_t read_buffer[10];
-#endif
-
-#ifdef RT_USING_SPI
-    rt_uint8_t tmp;
-#endif
-
-    if (dev->bus->type == RT_Device_Class_I2CBUS)
-    {
-#ifdef RT_USING_I2C
-        write_buffer[0] = CMD_EXIT;
-
-        msgs[0].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[0].flags = RT_I2C_WR;        /* Write flag */
-        msgs[0].buf   = write_buffer;     /* Slave register address */
-        msgs[0].len   = 1;                /* Number of bytes sent */
-
-        msgs[1].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = read_buffer;      /* Read data pointer */
-        msgs[1].len   = 1;                /* Number of bytes read */
-
-        if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
-        {
-            //if (buf[0] == 0x00)
-            res = RT_EOK;
-        }
-        else
-        {
-            res = -RT_ERROR;
-        }
-#endif
-    }
-    else
-    {
-#ifdef RT_USING_SPI
-        //The first bit of the first byte contains the Read/Write bit and indicates the Read (1) or Write (0) operation.
-        tmp = reg | 0x80;
-
-        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, &tmp, 1, buf);
-#endif
-    }
-
-    return res;
+    return mlx90393_send_cmd(dev, CMD_EXIT);
 }
 
 rt_err_t mlx90393_start_burst(struct mlx90393_device *dev, rt_int8_t zyxt)
@@ -662,168 +565,17 @@ static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, 
 
 rt_err_t mlx90393_memory_recall(struct mlx90393_device *dev)
 {
-    rt_int8_t res = 0;
-
-#ifdef RT_USING_I2C
-    struct rt_i2c_msg msgs[2];
-
-    uint8_t write_buffer[10];
-    uint8_t read_buffer[10];
-#endif
-
-#ifdef RT_USING_SPI
-    rt_uint8_t tmp;
-#endif
-
-    if (dev->bus->type == RT_Device_Class_I2CBUS)
-    {
-#ifdef RT_USING_I2C
-        write_buffer[0] = CMD_MEMORY_RECALL;
-
-        msgs[0].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[0].flags = RT_I2C_WR;        /* Write flag */
-        msgs[0].buf   = write_buffer;     /* Slave register address */
-        msgs[0].len   = 1;                /* Number of bytes sent */
-
-        msgs[1].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = read_buffer;      /* Read data pointer */
-        msgs[1].len   = 1;                /* Number of bytes read */
-
-        if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
-        {
-            //if (buf[0] == 0x00)
-            res = RT_EOK;
-        }
-        else
-        {
-            res = -RT_ERROR;
-        }
-#endif
-    }
-    else
-    {
-#ifdef RT_USING_SPI
-        //The first bit of the first byte contains the Read/Write bit and indicates the Read (1) or Write (0) operation.
-        tmp = reg | 0x80;
-
-        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, &tmp, 1, buf);
-#endif
-    }
-
-    return res;
+    return mlx90393_send_cmd(dev, CMD_MEMORY_RECALL);
 }
 
 rt_err_t mlx90393_memory_store(struct mlx90393_device *dev)
 {
-    rt_int8_t res = 0;
-
-#ifdef RT_USING_I2C
-    struct rt_i2c_msg msgs[2];
-
-    uint8_t write_buffer[10];
-    uint8_t read_buffer[10];
-#endif
-
-#ifdef RT_USING_SPI
-    rt_uint8_t tmp;
-#endif
-
-    if (dev->bus->type == RT_Device_Class_I2CBUS)
-    {
-#ifdef RT_USING_I2C
-        write_buffer[0] = CMD_MEMORY_STORE;
-
-        msgs[0].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[0].flags = RT_I2C_WR;        /* Write flag */
-        msgs[0].buf   = write_buffer;     /* Slave register address */
-        msgs[0].len   = 1;                /* Number of bytes sent */
-
-        msgs[1].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = read_buffer;      /* Read data pointer */
-        msgs[1].len   = 1;                /* Number of bytes read */
-
-        if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
-        {
-            //if (buf[0] == 0x00)
-            res = RT_EOK;
-        }
-        else
-        {
-            res = -RT_ERROR;
-        }
-#endif
-    }
-    else
-    {
-#ifdef RT_USING_SPI
-        //The first bit of the first byte contains the Read/Write bit and indicates the Read (1) or Write (0) operation.
-        tmp = reg | 0x80;
-
-        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, &tmp, 1, buf);
-#endif
-    }
-
-    return res;
+    return mlx90393_send_cmd(dev, CMD_MEMORY_STORE);
 }
 
 rt_err_t mlx90393_reset(struct mlx90393_device *dev)
 {
-    rt_int8_t res = 0;
-    union mlx90393_status status;
-
-#ifdef RT_USING_I2C
-    struct rt_i2c_msg msgs[2];
-
-    uint8_t write_buffer[10];
-    uint8_t read_buffer[10];
-#endif
-
-#ifdef RT_USING_SPI
-    rt_uint8_t tmp;
-#endif
-
-    if (dev->bus->type == RT_Device_Class_I2CBUS)
-    {
-#ifdef RT_USING_I2C
-        write_buffer[0] = CMD_RESET;
-
-        msgs[0].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[0].flags = RT_I2C_WR;        /* Write flag */
-        msgs[0].buf   = write_buffer;     /* Slave register address */
-        msgs[0].len   = 1;                /* Number of bytes sent */
-
-        msgs[1].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = read_buffer;      /* Read data pointer */
-        msgs[1].len   = 1;                /* Number of bytes read */
-
-        if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
-        {
-            status.byte_val = read_buffer[0];
-            rt_kprintf("status = 0x%x, BIT2(RS) = %d, BIT4(ERROR) = %d\r\n", status.byte_val, status.rs, status.error);
-
-            //if (buf[0] == 0x00)
-            res = RT_EOK;
-        }
-        else
-        {
-            res = -RT_ERROR;
-        }
-#endif
-    }
-    else
-    {
-#ifdef RT_USING_SPI
-        //The first bit of the first byte contains the Read/Write bit and indicates the Read (1) or Write (0) operation.
-        tmp = reg | 0x80;
-
-        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, &tmp, 1, buf);
-#endif
-    }
-
-    return res;
+    return mlx90393_send_cmd(dev, CMD_RESET);
 }
 
 rt_err_t mlx90393_set_hallconf(struct mlx90393_device *dev, uint8_t hallconf)
