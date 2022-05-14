@@ -66,12 +66,12 @@ rt_err_t mlx90393_nop(struct mlx90393_device *dev)
 
         write_buffer[0] = CMD_NOP;
 
-        msgs[0].addr  = dev->i2c_addr;    /* Slave address */
+        msgs[0].addr  = dev->i2c_addr;    /* I2C Slave address */
         msgs[0].flags = RT_I2C_WR;        /* Write flag */
-        msgs[0].buf   = write_buffer;     /* Slave register address */
+        msgs[0].buf   = write_buffer;     /* Write data pointer */
         msgs[0].len   = 1;                /* Number of bytes sent */
 
-        msgs[1].addr  = dev->i2c_addr;    /* Slave address */
+        msgs[1].addr  = dev->i2c_addr;    /* I2C Slave address */
         msgs[1].flags = RT_I2C_RD;        /* Read flag */
         msgs[1].buf   = read_buffer;      /* Read data pointer */
         msgs[1].len   = 1;                /* Number of bytes read */
@@ -96,6 +96,10 @@ rt_err_t mlx90393_nop(struct mlx90393_device *dev)
 
         res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, &tmp, 1, buf);
 #endif
+    }
+    else
+    {
+        
     }
 
     return res;
