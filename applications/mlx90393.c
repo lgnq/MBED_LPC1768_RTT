@@ -18,36 +18,53 @@
 
 rt_err_t mlx90393_i2c_cmd(struct mlx90393_device *dev, enum cmd c)
 {
-    rt_int8_t res = 0;
+    rt_err_t res = RT_EOK;
 
-#ifdef RT_USING_I2C
-    struct rt_i2c_msg msgs[2];
-
-    uint8_t write_buffer[10];
-    uint8_t read_buffer[10];
-
-    write_buffer[0] = c;
-
-    msgs[0].addr  = dev->i2c_addr;    /* Slave address */
-    msgs[0].flags = RT_I2C_WR;        /* Write flag */
-    msgs[0].buf   = write_buffer;     /* Slave register address */
-    msgs[0].len   = 1;                /* Number of bytes sent */
-
-    msgs[1].addr  = dev->i2c_addr;    /* Slave address */
-    msgs[1].flags = RT_I2C_RD;        /* Read flag */
-    msgs[1].buf   = read_buffer;      /* Read data pointer */
-    msgs[1].len   = 1;                /* Number of bytes read */
-
-    if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
+    if (dev->bus->type == RT_Device_Class_I2CBUS)
     {
-        //if (buf[0] == 0x00)
-        res = RT_EOK;
+#ifdef RT_USING_I2C
+        struct rt_i2c_msg msgs[2];
+
+        uint8_t write_buffer[10];
+        uint8_t read_buffer[10];
+
+        write_buffer[0] = c;
+
+        msgs[0].addr  = dev->i2c_addr;    /* I2C Slave address */
+        msgs[0].flags = RT_I2C_WR;        /* Write flag */
+        msgs[0].buf   = write_buffer;     /* Write data pointer */
+        msgs[0].len   = 1;                /* Number of bytes sent */
+
+        msgs[1].addr  = dev->i2c_addr;    /* I2C Slave address */
+        msgs[1].flags = RT_I2C_RD;        /* Read flag */
+        msgs[1].buf   = read_buffer;      /* Read data pointer */
+        msgs[1].len   = 1;                /* Number of bytes read */
+
+        if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
+        {
+            res = RT_EOK;
+        }
+        else
+        {
+            res = -RT_ERROR;
+        }
+#endif
+    }
+    else if (dev->bus->type == RT_Device_Class_SPIDevice)
+    {
+#ifdef RT_USING_SPI
+        rt_uint8_t tmp;
+
+        //The first bit of the first byte contains the Read/Write bit and indicates the Read (1) or Write (0) operation.
+        tmp = reg | 0x80;
+
+        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, &tmp, 1, buf);
+#endif
     }
     else
     {
-        res = -RT_ERROR;
+        
     }
-#endif
 
     return res;
 }
@@ -99,7 +116,7 @@ rt_err_t mlx90393_nop(struct mlx90393_device *dev)
     }
     else
     {
-        
+
     }
 
     return res;
