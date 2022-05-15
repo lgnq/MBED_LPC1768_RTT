@@ -28,12 +28,12 @@ rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buf, rt
 
         msgs[0].addr  = dev->i2c_addr;    /* I2C Slave address */
         msgs[0].flags = RT_I2C_WR;        /* Write flag */
-        msgs[0].buf   = send_buf;        /* Write data pointer */
-        msgs[0].len   = send_len;         /* Number of bytes sent */
+        msgs[0].buf   = send_buf;         /* Write data pointer */
+        msgs[0].len   = send_len;         /* Number of bytes write */
 
         msgs[1].addr  = dev->i2c_addr;    /* I2C Slave address */
         msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = recv_buf;        /* Read data pointer */
+        msgs[1].buf   = recv_buf;         /* Read data pointer */
         msgs[1].len   = recv_len;         /* Number of bytes read */
 
         if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
