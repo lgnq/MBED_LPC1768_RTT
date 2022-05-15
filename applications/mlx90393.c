@@ -16,7 +16,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buf, rt_uint8_t *recv_buf, rt_uint8_t send_len, rt_uint8_t recv_len)
+rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buf, rt_uint8_t send_len, rt_uint8_t *recv_buf, rt_uint8_t recv_len)
 {
     rt_err_t res = RT_EOK;
     union mlx90393_status status;
@@ -79,7 +79,7 @@ rt_err_t mlx90393_nop(struct mlx90393_device *dev)
 
     send_buf[0] = CMD_NOP;
 
-    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));
+    return(mlx90393_transfer(dev, send_buf, 1, recv_buf, 1));
 }
 
 rt_err_t mlx90393_exit(struct mlx90393_device *dev)
@@ -89,7 +89,7 @@ rt_err_t mlx90393_exit(struct mlx90393_device *dev)
 
     send_buf[0] = CMD_EXIT;
 
-    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));    
+    return(mlx90393_transfer(dev, send_buf, 1, recv_buf, 1));    
 }
 
 rt_err_t mlx90393_memory_recall(struct mlx90393_device *dev)
@@ -99,7 +99,7 @@ rt_err_t mlx90393_memory_recall(struct mlx90393_device *dev)
 
     send_buf[0] = CMD_MEMORY_RECALL;
 
-    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));    
+    return(mlx90393_transfer(dev, send_buf, 1, recv_buf, 1));    
 }
 
 rt_err_t mlx90393_memory_store(struct mlx90393_device *dev)
@@ -109,7 +109,7 @@ rt_err_t mlx90393_memory_store(struct mlx90393_device *dev)
 
     send_buf[0] = CMD_MEMORY_STORE;
 
-    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));     
+    return(mlx90393_transfer(dev, send_buf, 1, recv_buf, 1));     
 }
 
 rt_err_t mlx90393_reset(struct mlx90393_device *dev)
@@ -119,7 +119,7 @@ rt_err_t mlx90393_reset(struct mlx90393_device *dev)
 
     send_buf[0] = CMD_RESET;
 
-    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));     
+    return(mlx90393_transfer(dev, send_buf, 1, recv_buf, 1));     
 }
 
 rt_err_t mlx90393_start_burst(struct mlx90393_device *dev, rt_int8_t zyxt)
@@ -129,7 +129,7 @@ rt_err_t mlx90393_start_burst(struct mlx90393_device *dev, rt_int8_t zyxt)
 
     send_buf[0] = (CMD_START_BURST)|(zyxt);
 
-    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));
+    return(mlx90393_transfer(dev, send_buf, 1, recv_buf, 1));
 }
 
 rt_err_t mlx90393_wake_on_change(struct mlx90393_device *dev, rt_int8_t zyxt)
@@ -139,7 +139,7 @@ rt_err_t mlx90393_wake_on_change(struct mlx90393_device *dev, rt_int8_t zyxt)
 
     send_buf[0] = (CMD_WAKE_ON_CHANGE)|(zyxt);
 
-    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));
+    return(mlx90393_transfer(dev, send_buf, 1, recv_buf, 1));
 }
 
 rt_err_t mlx90393_start_measurement(struct mlx90393_device *dev, rt_int8_t zyxt)
@@ -149,7 +149,7 @@ rt_err_t mlx90393_start_measurement(struct mlx90393_device *dev, rt_int8_t zyxt)
 
     send_buf[0] = (CMD_START_MEASUREMENT)|(zyxt);
 
-    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));
+    return(mlx90393_transfer(dev, send_buf, 1, recv_buf, 1));
 }
 
 /**
@@ -171,7 +171,7 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
     send_buf[0] = CMD_READ_REGISTER;
     send_buf[1] = reg << 2;
 
-    res = mlx90393_transfer(dev, send_buf, recv_buf, 2, 3);
+    res = mlx90393_transfer(dev, send_buf, 2, recv_buf, 3);
     if (res == RT_EOK)
     {
         *val = ((uint16_t)recv_buf[1])<<8 | recv_buf[2];
@@ -202,7 +202,7 @@ static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, 
         reg << 2
     };
 
-    res = mlx90393_transfer(dev, send_buf, recv_buf, 4, 1);
+    res = mlx90393_transfer(dev, send_buf, 4, recv_buf, 1);
 
     return res;
 }
@@ -233,7 +233,7 @@ rt_err_t mlx90393_read_measurement(struct mlx90393_device *dev, rt_int8_t zyxt, 
         send_buf[i+2] = 0x00;
     }
 
-    res = mlx90393_transfer(dev, send_buf, recv_buf, 1, 1+2*count_set_bits(zyxt));
+    res = mlx90393_transfer(dev, send_buf, 1, recv_buf, 1+2*count_set_bits(zyxt));
     if (res == RT_EOK)
     {
         int idx = 1;
