@@ -16,7 +16,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buff, rt_uint8_t *recv_buff, rt_uint8_t send_len, rt_uint8_t recv_len)
+rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buf, rt_uint8_t *recv_buf, rt_uint8_t send_len, rt_uint8_t recv_len)
 {
     rt_err_t res = RT_EOK;
     union mlx90393_status status;
@@ -28,17 +28,17 @@ rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buff, r
 
         msgs[0].addr  = dev->i2c_addr;    /* I2C Slave address */
         msgs[0].flags = RT_I2C_WR;        /* Write flag */
-        msgs[0].buf   = send_buff;        /* Write data pointer */
+        msgs[0].buf   = send_buf;        /* Write data pointer */
         msgs[0].len   = send_len;         /* Number of bytes sent */
 
         msgs[1].addr  = dev->i2c_addr;    /* I2C Slave address */
         msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = recv_buff;        /* Read data pointer */
+        msgs[1].buf   = recv_buf;        /* Read data pointer */
         msgs[1].len   = recv_len;         /* Number of bytes read */
 
         if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
         {
-            status.byte_val = recv_buff[0];
+            status.byte_val = recv_buf[0];
             
             rt_kprintf("status = 0x%x\r\n", status.byte_val);
             rt_kprintf("[BIT7] BURST_MODE = 0x%x - MLX90393 works in Burst mode\r\n", status.burst_mode);
@@ -61,7 +61,7 @@ rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buff, r
     else if (dev->bus->type == RT_Device_Class_SPIDevice)
     {
 #ifdef RT_USING_SPI
-        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, send_buff, send_len, recv_buff, recv_len);
+        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, send_buf, send_len, recv_buf, recv_len);
 #endif
     }
     else
@@ -74,82 +74,82 @@ rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buff, r
 
 rt_err_t mlx90393_nop(struct mlx90393_device *dev)
 {
-    rt_uint8_t send_buff[2];
-    rt_uint8_t recv_buff[2];
+    rt_uint8_t send_buf[2];
+    rt_uint8_t recv_buf[2];
 
-    send_buff[0] = CMD_NOP;
+    send_buf[0] = CMD_NOP;
 
-    return(mlx90393_transfer(dev, send_buff, recv_buff, 1, 1));
+    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));
 }
 
 rt_err_t mlx90393_exit(struct mlx90393_device *dev)
 {
-    rt_uint8_t send_buff[2];
-    rt_uint8_t recv_buff[2];
+    rt_uint8_t send_buf[2];
+    rt_uint8_t recv_buf[2];
 
-    send_buff[0] = CMD_EXIT;
+    send_buf[0] = CMD_EXIT;
 
-    return(mlx90393_transfer(dev, send_buff, recv_buff, 1, 1));    
+    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));    
 }
 
 rt_err_t mlx90393_memory_recall(struct mlx90393_device *dev)
 {
-    rt_uint8_t send_buff[2];
-    rt_uint8_t recv_buff[2];
+    rt_uint8_t send_buf[2];
+    rt_uint8_t recv_buf[2];
 
-    send_buff[0] = CMD_MEMORY_RECALL;
+    send_buf[0] = CMD_MEMORY_RECALL;
 
-    return(mlx90393_transfer(dev, send_buff, recv_buff, 1, 1));    
+    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));    
 }
 
 rt_err_t mlx90393_memory_store(struct mlx90393_device *dev)
 {
-    rt_uint8_t send_buff[2];
-    rt_uint8_t recv_buff[2];
+    rt_uint8_t send_buf[2];
+    rt_uint8_t recv_buf[2];
 
-    send_buff[0] = CMD_MEMORY_STORE;
+    send_buf[0] = CMD_MEMORY_STORE;
 
-    return(mlx90393_transfer(dev, send_buff, recv_buff, 1, 1));     
+    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));     
 }
 
 rt_err_t mlx90393_reset(struct mlx90393_device *dev)
 {
-    rt_uint8_t send_buff[2];
-    rt_uint8_t recv_buff[2];
+    rt_uint8_t send_buf[2];
+    rt_uint8_t recv_buf[2];
 
-    send_buff[0] = CMD_RESET;
+    send_buf[0] = CMD_RESET;
 
-    return(mlx90393_transfer(dev, send_buff, recv_buff, 1, 1));     
+    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));     
 }
 
 rt_err_t mlx90393_start_burst(struct mlx90393_device *dev, rt_int8_t zyxt)
 {
-    rt_uint8_t send_buff[2];
-    rt_uint8_t recv_buff[2];
+    rt_uint8_t send_buf[2];
+    rt_uint8_t recv_buf[2];
 
-    send_buff[0] = (CMD_START_BURST)|(zyxt);
+    send_buf[0] = (CMD_START_BURST)|(zyxt);
 
-    return(mlx90393_transfer(dev, send_buff, recv_buff, 1, 1));
+    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));
 }
 
 rt_err_t mlx90393_wake_on_change(struct mlx90393_device *dev, rt_int8_t zyxt)
 {
-    rt_uint8_t send_buff[2];
-    rt_uint8_t recv_buff[2];
+    rt_uint8_t send_buf[2];
+    rt_uint8_t recv_buf[2];
 
-    send_buff[0] = (CMD_WAKE_ON_CHANGE)|(zyxt);
+    send_buf[0] = (CMD_WAKE_ON_CHANGE)|(zyxt);
 
-    return(mlx90393_transfer(dev, send_buff, recv_buff, 1, 1));
+    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));
 }
 
 rt_err_t mlx90393_start_measurement(struct mlx90393_device *dev, rt_int8_t zyxt)
 {
-    rt_uint8_t send_buff[2];
-    rt_uint8_t recv_buff[2];
+    rt_uint8_t send_buf[2];
+    rt_uint8_t recv_buf[2];
 
-    send_buff[0] = (CMD_START_MEASUREMENT)|(zyxt);
+    send_buf[0] = (CMD_START_MEASUREMENT)|(zyxt);
 
-    return(mlx90393_transfer(dev, send_buff, recv_buff, 1, 1));
+    return(mlx90393_transfer(dev, send_buf, recv_buf, 1, 1));
 }
 
 /**
@@ -165,16 +165,16 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
 {
     rt_err_t res = RT_EOK;
 
-    rt_uint8_t send_buff[10];
-    rt_uint8_t recv_buff[3];
+    rt_uint8_t send_buf[10];
+    rt_uint8_t recv_buf[3];
 
-    send_buff[0] = CMD_READ_REGISTER;
-    send_buff[1] = reg << 2;
+    send_buf[0] = CMD_READ_REGISTER;
+    send_buf[1] = reg << 2;
 
-    res = mlx90393_transfer(dev, send_buff, recv_buff, 2, 3);
+    res = mlx90393_transfer(dev, send_buf, recv_buf, 2, 3);
     if (res == RT_EOK)
     {
-        *val = ((uint16_t)recv_buff[1])<<8 | recv_buff[2];
+        *val = ((uint16_t)recv_buf[1])<<8 | recv_buf[2];
     }
 
     return res;
@@ -193,8 +193,8 @@ static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, 
 {
     rt_err_t res = RT_EOK;
 
-    rt_uint8_t recv_buff[3];
-    rt_uint8_t send_buff[] =
+    rt_uint8_t recv_buf[3];
+    rt_uint8_t send_buf[] =
     {
         CMD_WRITE_REGISTER,
         (val&0xFF00) >> 8,
@@ -202,7 +202,7 @@ static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, 
         reg << 2
     };
 
-    res = mlx90393_transfer(dev, send_buff, recv_buff, 4, 1);
+    res = mlx90393_transfer(dev, send_buf, recv_buf, 4, 1);
 
     return res;
 }
@@ -224,40 +224,40 @@ rt_err_t mlx90393_read_measurement(struct mlx90393_device *dev, rt_int8_t zyxt, 
 {
     rt_err_t res = RT_EOK;
 
-    rt_uint8_t send_buff[2];
-    rt_uint8_t recv_buff[10];
+    rt_uint8_t send_buf[2];
+    rt_uint8_t recv_buf[10];
 
-    send_buff[0] = (CMD_READ_MEASUREMENT)|(zyxt);
+    send_buf[0] = (CMD_READ_MEASUREMENT)|(zyxt);
     for (int i=0; i<2*count_set_bits(zyxt); i++)
     {
-        send_buff[i+2] = 0x00;
+        send_buf[i+2] = 0x00;
     }
 
-    res = mlx90393_transfer(dev, send_buff, recv_buff, 1, 1+2*count_set_bits(zyxt));
+    res = mlx90393_transfer(dev, send_buf, recv_buf, 1, 1+2*count_set_bits(zyxt));
     if (res == RT_EOK)
     {
         int idx = 1;
         if (zyxt & 0x1)
         {
-            txyz->t = ((uint16_t)recv_buff[idx]) << 8 | recv_buff[idx+1];
+            txyz->t = ((uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
             idx = idx + 2;
         }
 
         if (zyxt & 0x2)
         {
-            txyz->x = ((uint16_t)recv_buff[idx]) << 8 | recv_buff[idx+1];
+            txyz->x = ((uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
             idx = idx + 2;
         }
 
         if (zyxt & 0x4)
         {
-            txyz->y = ((uint16_t)recv_buff[idx]) << 8 | recv_buff[idx+1];
+            txyz->y = ((uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
             idx = idx + 2;
         }
 
         if (zyxt & 0x8)
         {
-            txyz->z = ((uint16_t)recv_buff[idx]) << 8 | recv_buff[idx+1];
+            txyz->z = ((uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
             idx = idx + 2;
         }
     }
