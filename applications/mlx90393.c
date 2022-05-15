@@ -61,7 +61,7 @@ rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buff, r
     else if (dev->bus->type == RT_Device_Class_SPIDevice)
     {
 #ifdef RT_USING_SPI
-        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, send_buff, recv_buff, send_len, recv_len);
+        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, send_buff, send_len, recv_buff, recv_len);
 #endif
     }
     else
