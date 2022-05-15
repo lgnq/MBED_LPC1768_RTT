@@ -16,6 +16,54 @@
 #include <string.h>
 #include <stdlib.h>
 
+rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buff, rt_uint8_t *recv_buff, rt_uint8_t send_len, rt_uint8_t recv_len)
+{
+    rt_err_t res = RT_EOK;
+
+    if (dev->bus->type == RT_Device_Class_I2CBUS)
+    {
+#ifdef RT_USING_I2C
+        struct rt_i2c_msg msgs[2];
+
+        msgs[0].addr  = dev->i2c_addr;    /* I2C Slave address */
+        msgs[0].flags = RT_I2C_WR;        /* Write flag */
+        msgs[0].buf   = send_buff;        /* Write data pointer */
+        msgs[0].len   = send_len;         /* Number of bytes sent */
+
+        msgs[1].addr  = dev->i2c_addr;    /* I2C Slave address */
+        msgs[1].flags = RT_I2C_RD;        /* Read flag */
+        msgs[1].buf   = recv_buff;        /* Read data pointer */
+        msgs[1].len   = recv_len;         /* Number of bytes read */
+
+        if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
+        {
+            res = RT_EOK;
+        }
+        else
+        {
+            res = -RT_ERROR;
+        }
+#endif
+    }
+    else if (dev->bus->type == RT_Device_Class_SPIDevice)
+    {
+#ifdef RT_USING_SPI
+        rt_uint8_t tmp;
+
+        //The first bit of the first byte contains the Read/Write bit and indicates the Read (1) or Write (0) operation.
+        tmp = reg | 0x80;
+
+        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, &tmp, 1, buf);
+#endif
+    }
+    else
+    {
+        
+    }
+
+    return res;
+}
+
 rt_err_t mlx90393_send_cmd(struct mlx90393_device *dev, enum cmd c)
 {
     rt_err_t res = RT_EOK;
@@ -71,7 +119,13 @@ rt_err_t mlx90393_send_cmd(struct mlx90393_device *dev, enum cmd c)
 
 rt_err_t mlx90393_nop(struct mlx90393_device *dev)
 {
-    return mlx90393_send_cmd(dev, CMD_NOP);
+    // return mlx90393_send_cmd(dev, CMD_NOP);
+    uint8_t send_buff[10];
+    uint8_t recv_buff[10];
+
+    send_buff[0] = CMD_NOP;
+    
+    return(mlx90393_transfer(dev, send_buff, recv_buff, 1, 1));
 }
 
 rt_err_t mlx90393_exit(struct mlx90393_device *dev)
