@@ -39,22 +39,6 @@ enum
     T_FLAG = 0x1
 } axis_flag_t;
 
-/* Accelerometer full scale range */
-enum mlx90393_accel_range
-{
-    MPU6XXX_ACCEL_RANGE_2G  = 0, // ±2G
-    MPU6XXX_ACCEL_RANGE_4G  = 1, // ±4G
-    MPU6XXX_ACCEL_RANGE_8G  = 2, // ±8G
-    MPU6XXX_ACCEL_RANGE_16G = 3  // ±16G
-};
-
-/* sleep mode parameters */
-enum mlx90393_sleep
-{
-    MPU6XXX_SLEEP_DISABLE = 0,
-    MPU6XXX_SLEEP_ENABLE  = 1
-};
-
 /* Supported configuration items */
 enum mlx90393_cmd
 {
