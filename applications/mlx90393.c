@@ -61,12 +61,7 @@ rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buff, r
     else if (dev->bus->type == RT_Device_Class_SPIDevice)
     {
 #ifdef RT_USING_SPI
-        rt_uint8_t tmp;
-
-        //The first bit of the first byte contains the Read/Write bit and indicates the Read (1) or Write (0) operation.
-        tmp = reg | 0x80;
-
-        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, &tmp, 1, buf);
+        res = rt_spi_send_then_recv((struct rt_spi_device *)dev->bus, send_buff, recv_buff, send_len, recv_len);
 #endif
     }
     else
