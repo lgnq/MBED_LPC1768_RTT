@@ -528,68 +528,24 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
  *
  * @param dev the pointer of device driver structure
  * @param reg the register for mlx90393
- * @param data value to write
+ * @param val value to write
  *
  * @return the writing status, RT_EOK represents writing the value of the register successfully.
  */
-static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, rt_uint16_t data)
+static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, rt_uint16_t val)
 {
-    rt_err_t res = 0;
-    union mlx90393_status status;
+    rt_err_t res = RT_EOK;
 
-#ifdef RT_USING_I2C
-    struct rt_i2c_msg msgs[2];
-    rt_uint8_t read_buffer;
-    rt_uint8_t write_buffer[4] =
+    rt_uint8_t recv_buff[3];
+    rt_uint8_t send_buff[] =
     {
         CMD_WRITE_REGISTER,
-        (data&0xFF00) >> 8,
-        data&0x00FF,
+        (val&0xFF00) >> 8,
+        val&0x00FF,
         reg << 2
     };
-#endif
 
-    if (dev->bus->type == RT_Device_Class_I2CBUS)
-    {
-#ifdef RT_USING_I2C
-        msgs[0].addr  = dev->i2c_addr;    /* slave address */
-        msgs[0].flags = RT_I2C_WR;        /* write flag */
-        msgs[0].buf   = write_buffer;     /* Send data pointer */
-        msgs[0].len   = 4;
-
-        msgs[1].addr  = dev->i2c_addr;    /* Slave address */
-        msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = &read_buffer;     /* Read data pointer */
-        msgs[1].len   = 1;                /* Number of bytes read */
-
-        if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
-        {
-            status.byte_val = read_buffer;
-            
-            rt_kprintf("status = 0x%x\r\n", status.byte_val);
-            rt_kprintf("[BIT7] BURST_MODE = 0x%x - MLX90393 works in Burst mode\r\n", status.burst_mode);
-            rt_kprintf("[BIT6] WOC_MODE   = 0x%x - MLX90393 works in Wake On Change mode\r\n", status.woc_mode);
-            rt_kprintf("[BIT5] SM_MODE    = 0x%x - MLX90393 works in Single measurement mode\r\n", status.sm_mode);
-            rt_kprintf("[BIT4] ERROR      = 0x%x - ECC_ERROR or command is rejected\r\n", status.error);
-            rt_kprintf("[BIT3] SED        = 0x%x - a bit error in the non-volatile memory has been corrected\r\n", status.sed);
-            rt_kprintf("[BIT2] RS         = 0x%x - Reset bit\r\n", status.rs);
-            rt_kprintf("[BIT1] D1         = 0x%x - The number of response bytes correspond to 2*D[1:0]+2\r\n", status.d1);
-            rt_kprintf("[BIT0] D0         = 0x%x - The number of response bytes correspond to 2*D[1:0]+2\r\n\r\n", status.d0);
-
-            res = RT_EOK;
-        }
-        else
-        {
-            res = -RT_ERROR;
-        }
-#endif
-    }
-    else
-    {
-#ifdef RT_USING_SPI
-        res = rt_spi_send_then_send((struct rt_spi_device *)dev->bus, &reg, 1, &data, 1);
-#endif
-    }
+    res = mlx90393_transfer(dev, send_buff, recv_buff, 4, 1);
 
     return res;
 }
