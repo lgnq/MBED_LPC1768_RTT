@@ -157,6 +157,61 @@ rt_err_t mlx90393_start_measurement(struct mlx90393_device *dev, rt_int8_t zyxt)
     return(mlx90393_transfer(dev, send_buff, recv_buff, 1, 1));
 }
 
+/**
+ * This function reads the value of register for mlx90393
+ *
+ * @param dev the pointer of device driver structure
+ * @param reg the register for mlx90393
+ * @param val read data pointer
+ *
+ * @return the reading status, RT_EOK represents reading the value of register successfully.
+ */
+static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, rt_uint16_t *val)
+{
+    rt_err_t res = RT_EOK;
+
+    rt_uint8_t send_buff[10];
+    rt_uint8_t recv_buff[3];
+
+    send_buff[0] = CMD_READ_REGISTER;
+    send_buff[1] = reg << 2;
+
+    res = mlx90393_transfer(dev, send_buff, recv_buff, 2, 3);
+    if (res == RT_EOK)
+    {
+        *val = ((uint16_t)recv_buff[1])<<8 | recv_buff[2];
+    }
+
+    return res;
+}
+
+/**
+ * This function writes the value of the register for mlx90393
+ *
+ * @param dev the pointer of device driver structure
+ * @param reg the register for mlx90393
+ * @param val value to write
+ *
+ * @return the writing status, RT_EOK represents writing the value of the register successfully.
+ */
+static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, rt_uint16_t val)
+{
+    rt_err_t res = RT_EOK;
+
+    rt_uint8_t recv_buff[3];
+    rt_uint8_t send_buff[] =
+    {
+        CMD_WRITE_REGISTER,
+        (val&0xFF00) >> 8,
+        val&0x00FF,
+        reg << 2
+    };
+
+    res = mlx90393_transfer(dev, send_buff, recv_buff, 4, 1);
+
+    return res;
+}
+
 int count_set_bits(int N)
 {
     int result = 0;
@@ -285,61 +340,6 @@ rt_err_t mlx90393_convert_measurement(struct mlx90393_device *dev, struct mlx903
     // rt_kprintf("%.3f uT %.3f uT %.3f uT\r\n", x, y, z);
     // rt_kprintf("0x%xuT 0x%xuT 0x%xuT\r\n", x, y, z);
     rt_kprintf("%duT %duT %duT\r\n", (int)x, (int)y, (int)z);
-}
-
-/**
- * This function reads the value of register for mlx90393
- *
- * @param dev the pointer of device driver structure
- * @param reg the register for mlx90393
- * @param val read data pointer
- *
- * @return the reading status, RT_EOK represents reading the value of register successfully.
- */
-static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, rt_uint16_t *val)
-{
-    rt_err_t res = RT_EOK;
-
-    rt_uint8_t send_buff[10];
-    rt_uint8_t recv_buff[3];
-
-    send_buff[0] = CMD_READ_REGISTER;
-    send_buff[1] = reg << 2;
-
-    res = mlx90393_transfer(dev, send_buff, recv_buff, 2, 3);
-    if (res == RT_EOK)
-    {
-        *val = ((uint16_t)recv_buff[1])<<8 | recv_buff[2];
-    }
-
-    return res;
-}
-
-/**
- * This function writes the value of the register for mlx90393
- *
- * @param dev the pointer of device driver structure
- * @param reg the register for mlx90393
- * @param val value to write
- *
- * @return the writing status, RT_EOK represents writing the value of the register successfully.
- */
-static rt_err_t mlx90393_write_reg(struct mlx90393_device *dev, rt_uint8_t reg, rt_uint16_t val)
-{
-    rt_err_t res = RT_EOK;
-
-    rt_uint8_t recv_buff[3];
-    rt_uint8_t send_buff[] =
-    {
-        CMD_WRITE_REGISTER,
-        (val&0xFF00) >> 8,
-        val&0x00FF,
-        reg << 2
-    };
-
-    res = mlx90393_transfer(dev, send_buff, recv_buff, 4, 1);
-
-    return res;
 }
 
 rt_err_t mlx90393_set_hallconf(struct mlx90393_device *dev, uint8_t hallconf)
