@@ -858,7 +858,6 @@ rt_err_t mlx90393_set_param(struct mlx90393_device *dev, enum mlx90393_cmd cmd, 
 struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
 {
     struct mlx90393_device *dev = RT_NULL;
-    rt_uint8_t res = RT_EOK;
 
     RT_ASSERT(dev_name);
 
@@ -919,14 +918,6 @@ struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
         goto __exit;
     }
 
-    if (res == RT_EOK)
-    {
-        rt_kprintf("Device init succeed!\r\n");
-    }
-    else
-    {
-        rt_kprintf("Error in device initialization!\r\n");
-    }
     return dev;
 
 __exit:
