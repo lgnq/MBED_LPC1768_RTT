@@ -16,6 +16,73 @@
 #include <string.h>
 #include <stdlib.h>
 
+/** Lookup table to convert raw values to uT based on [HALLCONF][GAIN_SEL][RES].
+ */
+const float mlx90393_lsb_lookup[2][8][4][2] =
+{
+    /* HALLCONF = 0xC (default) */
+    {
+        /* GAIN_SEL = 0, 5x gain */
+        {{0.751, 1.210}, {1.502, 2.420}, {3.004, 4.840}, {6.009, 9.680}},
+        /* GAIN_SEL = 1, 4x gain */
+        {{0.601, 0.968}, {1.202, 1.936}, {2.403, 3.872}, {4.840, 7.744}},
+        /* GAIN_SEL = 2, 3x gain */
+        {{0.451, 0.726}, {0.901, 1.452}, {1.803, 2.904}, {3.605, 5.808}},
+        /* GAIN_SEL = 3, 2.5x gain */
+        {{0.376, 0.605}, {0.751, 1.210}, {1.502, 2.420}, {3.004, 4.840}},
+        /* GAIN_SEL = 4, 2x gain */
+        {{0.300, 0.484}, {0.601, 0.968}, {1.202, 1.936}, {2.403, 3.872}},
+        /* GAIN_SEL = 5, 1.667x gain */
+        {{0.250, 0.403}, {0.501, 0.807}, {1.001, 1.613}, {2.003, 3.227}},
+        /* GAIN_SEL = 6, 1.333x gain */
+        {{0.200, 0.323}, {0.401, 0.645}, {0.801, 1.291}, {1.602, 2.581}},
+        /* GAIN_SEL = 7, 1x gain */
+        {{0.150, 0.242}, {0.300, 0.484}, {0.601, 0.968}, {1.202, 1.936}},
+    },
+
+    /* HALLCONF = 0x0 */
+    {
+        /* GAIN_SEL = 0, 5x gain */
+        {{0.787, 1.267}, {1.573, 2.534}, {3.146, 5.068}, {6.292, 10.137}},
+        /* GAIN_SEL = 1, 4x gain */
+        {{0.629, 1.014}, {1.258, 2.027}, {2.517, 4.055}, {5.034, 8.109}},
+        /* GAIN_SEL = 2, 3x gain */
+        {{0.472, 0.760}, {0.944, 1.521}, {1.888, 3.041}, {3.775, 6.082}},
+        /* GAIN_SEL = 3, 2.5x gain */
+        {{0.393, 0.634}, {0.787, 1.267}, {1.573, 2.534}, {3.146, 5.068}},
+        /* GAIN_SEL = 4, 2x gain */
+        {{0.315, 0.507}, {0.629, 1.014}, {1.258, 2.027}, {2.517, 4.055}},
+        /* GAIN_SEL = 5, 1.667x gain */
+        {{0.262, 0.422}, {0.524, 0.845}, {1.049, 1.689}, {2.097, 3.379}},
+        /* GAIN_SEL = 6, 1.333x gain */
+        {{0.210, 0.338}, {0.419, 0.676}, {0.839, 1.352}, {1.678, 2.703}},
+        /* GAIN_SEL = 7, 1x gain */
+        {{0.157, 0.253}, {0.315, 0.507}, {0.629, 1.014}, {1.258, 2.027}},
+    }
+};
+
+/** Lookup table for conversion time based on [DIF_FILT][OSR].
+ */
+const float mlx90393_tconv[8][4] =
+{
+    /* DIG_FILT = 0 */
+    {1.27, 1.84, 3.00, 5.30},
+    /* DIG_FILT = 1 */
+    {1.46, 2.23, 3.76, 6.84},
+    /* DIG_FILT = 2 */
+    {1.84, 3.00, 5.30, 9.91},
+    /* DIG_FILT = 3 */
+    {2.61, 4.53, 8.37, 16.05},
+    /* DIG_FILT = 4 */
+    {4.15, 7.60, 14.52, 28.34},
+    /* DIG_FILT = 5 */
+    {7.22, 13.75, 26.80, 52.92},
+    /* DIG_FILT = 6 */
+    {13.36, 26.04, 51.38, 102.07},
+    /* DIF_FILT = 7 */
+    {25.65, 50.61, 100.53, 200.37},
+};
+
 rt_err_t mlx90393_transfer(struct mlx90393_device *dev, rt_uint8_t *send_buf, rt_uint8_t send_len, rt_uint8_t *recv_buf, rt_uint8_t recv_len)
 {
     rt_err_t res = RT_EOK;
@@ -174,7 +241,7 @@ static rt_err_t mlx90393_read_reg(struct mlx90393_device *dev, rt_uint8_t reg, r
     res = mlx90393_transfer(dev, send_buf, 2, recv_buf, 3);
     if (res == RT_EOK)
     {
-        *val = ((uint16_t)recv_buf[1])<<8 | recv_buf[2];
+        *val = ((rt_uint16_t)recv_buf[1])<<8 | recv_buf[2];
     }
 
     return res;
@@ -239,25 +306,25 @@ rt_err_t mlx90393_read_measurement(struct mlx90393_device *dev, rt_int8_t zyxt, 
         int idx = 1;
         if (zyxt & 0x1)
         {
-            txyz->t = ((uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
+            txyz->t = ((rt_uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
             idx = idx + 2;
         }
 
         if (zyxt & 0x2)
         {
-            txyz->x = ((uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
+            txyz->x = ((rt_uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
             idx = idx + 2;
         }
 
         if (zyxt & 0x4)
         {
-            txyz->y = ((uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
+            txyz->y = ((rt_uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
             idx = idx + 2;
         }
 
         if (zyxt & 0x8)
         {
-            txyz->z = ((uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
+            txyz->z = ((rt_uint16_t)recv_buf[idx]) << 8 | recv_buf[idx+1];
             idx = idx + 2;
         }
     }
@@ -337,11 +404,11 @@ rt_err_t mlx90393_convert_measurement(struct mlx90393_device *dev, struct mlx903
     rt_kprintf("%duT %duT %duT\r\n", (int)x, (int)y, (int)z);
 }
 
-rt_err_t mlx90393_set_hallconf(struct mlx90393_device *dev, uint8_t hallconf)
+rt_err_t mlx90393_set_hallconf(struct mlx90393_device *dev, rt_uint8_t hallconf)
 {
     rt_err_t res = 0;
 
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register0 reg;
 
     res = mlx90393_read_reg(dev, 0, &register_val);
@@ -361,7 +428,7 @@ rt_err_t mlx90393_set_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t gain
 {
     rt_err_t res = 0;
 
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register0 reg;
 
     res = mlx90393_read_reg(dev, 0, &register_val);
@@ -382,7 +449,7 @@ rt_err_t mlx90393_get_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t *gai
 {
     rt_err_t res = 0;
 
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register0 reg;
 
     res = mlx90393_read_reg(dev, 0, &register_val);
@@ -397,54 +464,54 @@ rt_err_t mlx90393_get_gain_sel(struct mlx90393_device *dev, mlx90393_gain_t *gai
     return res;
 }
 
-uint8_t mlx90393_set_burst_sel(struct mlx90393_device *dev, uint8_t burst_sel)
+rt_uint8_t mlx90393_set_burst_sel(struct mlx90393_device *dev, rt_uint8_t burst_sel)
 {
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register1 reg;
 
-    uint8_t status1 = mlx90393_read_reg(dev, 1, &register_val);
+    rt_uint8_t status1 = mlx90393_read_reg(dev, 1, &register_val);
     reg.word_val = register_val;
     reg.burst_sel = burst_sel;
-    uint8_t status2 = mlx90393_write_reg(dev, 1, reg.word_val);
+    rt_uint8_t status2 = mlx90393_write_reg(dev, 1, reg.word_val);
 
     return (status1) | (status2);
 }
 
-uint8_t mlx90393_set_external_trigger(struct mlx90393_device *dev, uint8_t ext_trg)
+rt_uint8_t mlx90393_set_external_trigger(struct mlx90393_device *dev, rt_uint8_t ext_trg)
 {
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register1 reg;
 
-    uint8_t status1 = mlx90393_read_reg(dev, 1, &register_val);
+    rt_uint8_t status1 = mlx90393_read_reg(dev, 1, &register_val);
     reg.word_val = register_val;
     reg.ext_trg = ext_trg;
-    uint8_t status2 = mlx90393_write_reg(dev, 1, reg.word_val);
+    rt_uint8_t status2 = mlx90393_write_reg(dev, 1, reg.word_val);
 
     return (status1) | (status2);
 }
 
-uint8_t mlx90393_set_trigger_interrup_sel(struct mlx90393_device *dev, uint8_t trig_int)
+rt_uint8_t mlx90393_set_trigger_interrup_sel(struct mlx90393_device *dev, rt_uint8_t trig_int)
 {
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register1 reg;
 
-    uint8_t status1 = mlx90393_read_reg(dev, 1, &register_val);
+    rt_uint8_t status1 = mlx90393_read_reg(dev, 1, &register_val);
     reg.word_val = register_val;
     reg.trig_int = trig_int;
-    uint8_t status2 = mlx90393_write_reg(dev, 1, reg.word_val);
+    rt_uint8_t status2 = mlx90393_write_reg(dev, 1, reg.word_val);
 
     return (status1) | (status2);
 }
 
-uint8_t mlx90393_set_temperature_compensation(struct mlx90393_device *dev, uint8_t on_off)
+rt_uint8_t mlx90393_set_temperature_compensation(struct mlx90393_device *dev, rt_uint8_t on_off)
 {
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register1 reg;
 
-    uint8_t status1 = mlx90393_read_reg(dev, 1, &register_val);
+    rt_uint8_t status1 = mlx90393_read_reg(dev, 1, &register_val);
     reg.word_val = register_val;
     reg.tcmp_en = on_off;
-    uint8_t status2 = mlx90393_write_reg(dev, 1, reg.word_val);
+    rt_uint8_t status2 = mlx90393_write_reg(dev, 1, reg.word_val);
 
     return (status1) | (status2);
 }
@@ -453,7 +520,7 @@ rt_err_t mlx90393_set_resolution(struct mlx90393_device *dev, mlx90393_resolutio
 {
     rt_err_t res = 0;
 
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register2 reg;
 
     res = mlx90393_read_reg(dev, 2, &register_val);
@@ -476,7 +543,7 @@ rt_err_t mlx90393_get_resolution(struct mlx90393_device *dev, mlx90393_resolutio
 {
     rt_err_t res = 0;
 
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register2 reg;
 
     res = mlx90393_read_reg(dev, 2, &register_val);
@@ -497,7 +564,7 @@ rt_err_t mlx90393_set_oversampling(struct mlx90393_device *dev, mlx90393_oversam
 {
     rt_err_t res = 0;
 
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register2 reg;
 
     res = mlx90393_read_reg(dev, 2, &register_val);
@@ -517,7 +584,7 @@ rt_err_t mlx90393_get_oversampling(struct mlx90393_device *dev, mlx90393_oversam
 {
     rt_err_t res = 0;
 
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register2 reg;
 
     res = mlx90393_read_reg(dev, 2, &register_val);
@@ -534,7 +601,7 @@ rt_err_t mlx90393_set_digital_filtering(struct mlx90393_device *dev, mlx90393_fi
 {
     rt_err_t res = 0;
 
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register2 reg;
 
     res = mlx90393_read_reg(dev, 2, &register_val);
@@ -554,7 +621,7 @@ rt_err_t mlx90393_get_digital_filtering(struct mlx90393_device *dev, mlx90393_fi
 {
     rt_err_t res = 0;
 
-    uint16_t register_val;
+    rt_uint16_t register_val;
     union mlx90393_register2 reg;
 
     res = mlx90393_read_reg(dev, 2, &register_val);
@@ -567,44 +634,44 @@ rt_err_t mlx90393_get_digital_filtering(struct mlx90393_device *dev, mlx90393_fi
     return res;
 }
 
-uint8_t mlx90393_set_offset_x(struct mlx90393_device *dev, uint16_t offset)
+rt_uint8_t mlx90393_set_offset_x(struct mlx90393_device *dev, rt_uint16_t offset)
 {
-    uint8_t status = mlx90393_write_reg(dev, 4, offset);
+    rt_uint8_t status = mlx90393_write_reg(dev, 4, offset);
 
     return status;
 }
 
-uint8_t mlx90393_set_offset_y(struct mlx90393_device *dev, uint16_t offset)
+rt_uint8_t mlx90393_set_offset_y(struct mlx90393_device *dev, rt_uint16_t offset)
 {
-    uint8_t status = mlx90393_write_reg(dev, 5, offset);
+    rt_uint8_t status = mlx90393_write_reg(dev, 5, offset);
 
     return status;
 }
 
-uint8_t mlx90393_set_offset_z(struct mlx90393_device *dev, uint16_t offset)
+rt_uint8_t mlx90393_set_offset_z(struct mlx90393_device *dev, rt_uint16_t offset)
 {
-    uint8_t status = mlx90393_write_reg(dev, 6, offset);
+    rt_uint8_t status = mlx90393_write_reg(dev, 6, offset);
 
     return status;
 }
 
-uint8_t mlx90393_set_woxy_threshold(struct mlx90393_device *dev, uint16_t woxy_threshold)
+rt_uint8_t mlx90393_set_woxy_threshold(struct mlx90393_device *dev, rt_uint16_t woxy_threshold)
 {
-    uint8_t status = mlx90393_write_reg(dev, 7, woxy_threshold);
+    rt_uint8_t status = mlx90393_write_reg(dev, 7, woxy_threshold);
 
     return status;
 }
 
-uint8_t mlx90393_set_woz_threshold(struct mlx90393_device *dev, uint16_t woz_threshold)
+rt_uint8_t mlx90393_set_woz_threshold(struct mlx90393_device *dev, rt_uint16_t woz_threshold)
 {
-    uint8_t status = mlx90393_write_reg(dev, 6, woz_threshold);
+    rt_uint8_t status = mlx90393_write_reg(dev, 6, woz_threshold);
 
     return status;
 }
 
-uint8_t mlx90393_set_wot_threshold(struct mlx90393_device *dev, uint16_t wot_threshold)
+rt_uint8_t mlx90393_set_wot_threshold(struct mlx90393_device *dev, rt_uint16_t wot_threshold)
 {
-    uint8_t status = mlx90393_write_reg(dev, 6, wot_threshold);
+    rt_uint8_t status = mlx90393_write_reg(dev, 6, wot_threshold);
 
     return status;
 }
@@ -632,7 +699,7 @@ void mlx90393_setup(struct mlx90393_device *dev)
  */
 static rt_err_t mlx90393_get_txyz_raw(struct mlx90393_device *dev, struct mlx90393_txyz *txyz)
 {
-    uint8_t status = mlx90393_start_measurement(dev, X_FLAG | Y_FLAG | Z_FLAG | T_FLAG);
+    rt_uint8_t status = mlx90393_start_measurement(dev, X_FLAG | Y_FLAG | Z_FLAG | T_FLAG);
 
     // wait for DRDY signal if connected, otherwise delay appropriately
 //    if (DRDY_pin >= 0)
@@ -885,7 +952,7 @@ void mlx90393_deinit(struct mlx90393_device *dev)
 
 static void mlx90393(int argc, char **argv)
 {
-    uint16_t register_val;
+    rt_uint16_t register_val;
     static struct mlx90393_device *dev = RT_NULL;
 
     /* If the number of arguments less than 2 */
