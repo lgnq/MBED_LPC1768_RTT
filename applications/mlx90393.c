@@ -786,7 +786,7 @@ static rt_err_t mlx90393_get_param(struct mlx90393_device *dev, enum mlx90393_cm
  * @param cmd Configuration item
  * @param param Configuration item parameter
  *
- * @return the setting status, RT_EOK reprensents  setting the parameter successfully.
+ * @return the setting status, RT_EOK represents  setting the parameter successfully.
  */
 rt_err_t mlx90393_set_param(struct mlx90393_device *dev, enum mlx90393_cmd cmd, rt_uint16_t param)
 {
@@ -853,12 +853,11 @@ rt_err_t mlx90393_set_param(struct mlx90393_device *dev, enum mlx90393_cmd cmd, 
  * @param dev_name the name of transfer device
  * @param param the i2c device address for i2c communication, RT_NULL for spi
  *
- * @return the pointer of device driver structure, RT_NULL reprensents  initialization failed.
+ * @return the pointer of device driver structure, RT_NULL represents  initialization failed.
  */
 struct mlx90393_device *mlx90393_init(const char *dev_name, rt_uint8_t param)
 {
     struct mlx90393_device *dev = RT_NULL;
-    rt_uint8_t reg = 0xFF;
     rt_uint8_t res = RT_EOK;
 
     RT_ASSERT(dev_name);
