@@ -16,7 +16,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-/** Lookup table to convert raw values to uT based on [HALLCONF][GAIN_SEL][RES].
+/*
+ * Lookup table to convert raw values to uT based on [HALLCONF][GAIN_SEL][RES][SENSxy, SENSz].
  */
 const float mlx90393_lsb_lookup[2][8][4][2] =
 {
@@ -61,7 +62,8 @@ const float mlx90393_lsb_lookup[2][8][4][2] =
     }
 };
 
-/** Lookup table for conversion time based on [DIF_FILT][OSR].
+/*
+ * Lookup table for conversion time based on [DIF_FILT][OSR].
  */
 const float mlx90393_tconv[8][4] =
 {
