@@ -49,9 +49,10 @@ rt_err_t mlx90640_reset(struct mlx90640_device *dev)
 /**
  * This function reads the value of register for mlx90640
  *
- * @param dev the pointer of device driver structure
- * @param reg the register for mlx90640
- * @param val read data pointer
+ * @param dev  the pointer of device driver structure
+ * @param addr the start address
+ * @param data the data buffer
+ * @param num  the number for reading
  *
  * @return the reading status, RT_EOK represents reading the value of register successfully.
  */
