@@ -16,52 +16,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-rt_err_t mlx90640_transfer(struct mlx90640_device *dev, rt_uint8_t *send_buf, rt_uint8_t send_len, rt_uint8_t *recv_buf, rt_uint8_t recv_len)
-{
-    rt_int8_t i = 0;
-    rt_err_t res = RT_EOK;
-
-    recv_buf[0] = 0x0;
-    recv_buf[1] = 0x0;
-
-    if (dev->bus->type == RT_Device_Class_I2CBUS)
-    {
-#ifdef RT_USING_I2C
-        struct rt_i2c_msg msgs[2];
-
-        msgs[0].addr  = dev->i2c_addr;    /* I2C Slave address */
-        msgs[0].flags = RT_I2C_WR;        /* Write flag */
-        msgs[0].buf   = send_buf;         /* Write data pointer */
-        msgs[0].len   = send_len;         /* Number of bytes write */
-
-        msgs[1].addr  = dev->i2c_addr;    /* I2C Slave address */
-        msgs[1].flags = RT_I2C_RD;        /* Read flag */
-        msgs[1].buf   = recv_buf;         /* Read data pointer */
-        msgs[1].len   = recv_len;         /* Number of bytes read */
-
-        i = rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2);
-        if (i == 2)
-        {
-            rt_kprintf("0x%x 0x%x\r\n", recv_buf[1], recv_buf[0]);
-
-            res = RT_EOK;
-        }
-        else
-        {
-            rt_kprintf("%d : 0x%x 0x%x\r\n", i, recv_buf[1], recv_buf[0]);
-
-            res = -RT_ERROR;
-        }
-#endif
-    }
-    else
-    {
-        
-    }
-
-    return res;
-}
-
 rt_err_t mlx90640_reset(struct mlx90640_device *dev)
 {
     rt_err_t res = RT_EOK;
@@ -189,9 +143,9 @@ static rt_err_t mlx90640_write(struct mlx90640_device *dev, rt_uint16_t addr, rt
 
 void mlx90640_setup(struct mlx90640_device *dev)
 {
-//    mlx90640_reset(dev);
+   mlx90640_reset(dev);
 
-   rt_thread_delay(10000);
+   rt_thread_delay(1000);
 }
 
 void mlx90640_read_id(struct mlx90640_device *dev)
