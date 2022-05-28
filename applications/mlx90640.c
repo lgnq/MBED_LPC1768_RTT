@@ -201,7 +201,7 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
         }
         else
         {
-            /* find mlx90640 device at address: 0x19 */
+            /* find mlx90640 device at address: 0x33 */
             dev->i2c_addr = MLX90640_I2C_ADDRESS;
 
             mlx90640_reset(dev);
