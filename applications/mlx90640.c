@@ -163,6 +163,13 @@ void mlx90640_read_id(struct mlx90640_device *dev)
     }    
 }
 
+rt_err_t mlx90640_dump_eeprom(struct mlx90640_device *dev)
+{
+    rt_uint16_t eeprom[832];
+
+    return mlx90640_read(dev, 0x2400, eeprom, 832);
+}
+
 /**
  * This function initialize the mlx90640 device.
  *
