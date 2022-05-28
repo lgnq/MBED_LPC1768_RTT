@@ -13,8 +13,47 @@
 
 #include <rtthread.h>
 
-#define MLX90393_I2C_ADDRESS                    0x0C        // address pin A0,A1 low (GND), default for MLX90393
+#define A0  0
+#define A1  0
+
+enum pn
+{
+    MLX90393SLW_ABA_011,
+    MLX90393SLW_ABA_012,
+    MLX90393SLW_ABA_013,
+    MLX90393SLW_ABA_014,
+    MLX90393ELW_ABA_011,
+    MLX90393ELW_ABA_012,
+    MLX90393ELW_ABA_013,
+    MLX90393ELW_ABA_014,
+    MLX90393SLQ_ABA_011,
+    MLX90393SLW_ABA_111,
+};
+
+#define MLX90393    MLX90393SLW_ABA_011
+
+#if MLX90393 == MLX90393SLW_ABA_011
+#define MLX90393_I2C_ADDRESS                    (0x0C | A1<<1 | A0)        // address pin A0,A1 low (GND), default for MLX90393
 // #define MLX90393_I2C_ADDRESS                    (0x18 >> 1) // 7-bit address pin A0,A1 low (GND), default for MLX90393
+#elif MLX90393 == MLX90393SLW_ABA_012
+#define MLX90393_I2C_ADDRESS                    (0x10 | A1<<1 | A0)        // address pin A0,A1 low (GND), default for MLX90393
+#elif MLX90393 == MLX90393SLW_ABA_013
+#define MLX90393_I2C_ADDRESS                    (0x14 | A1<<1 | A0)        // address pin A0,A1 low (GND), default for MLX90393
+#elif MLX90393 == MLX90393SLW_ABA_014
+#define MLX90393_I2C_ADDRESS                    (0x18 | A1<<1 | A0)        // address pin A0,A1 low (GND), default for MLX90393
+#elif MLX90393 == MLX90393ELW_ABA_011
+#define MLX90393_I2C_ADDRESS                    (0x0C | A1<<1 | A0)        // address pin A0,A1 low (GND), default for MLX90393
+#elif MLX90393 == MLX90393ELW_ABA_012
+#define MLX90393_I2C_ADDRESS                    (0x10 | A1<<1 | A0)        // address pin A0,A1 low (GND), default for MLX90393
+#elif MLX90393 == MLX90393ELW_ABA_013
+#define MLX90393_I2C_ADDRESS                    (0x14 | A1<<1 | A0)        // address pin A0,A1 low (GND), default for MLX90393
+#elif MLX90393 == MLX90393ELW_ABA_014
+#define MLX90393_I2C_ADDRESS                    (0x18 | A1<<1 | A0)        // address pin A0,A1 low (GND), default for MLX90393
+#elif MLX90393 == MLX90393SLQ_ABA_011
+#define MLX90393_I2C_ADDRESS                    (0x10 | A1<<1 | A0)        // address pin A0,A1 low (GND), default for MLX90393
+#elif MLX90393 == MLX90393SLW_ABA_111
+#define MLX90393_I2C_ADDRESS                    (0x10 | A1<<1 | A0)        // address pin A0,A1 low (GND), default for MLX90393
+#endif
 
 enum cmd
 {
