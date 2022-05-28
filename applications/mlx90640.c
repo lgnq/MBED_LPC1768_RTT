@@ -170,6 +170,43 @@ rt_err_t mlx90640_dump_eeprom(struct mlx90640_device *dev)
     return mlx90640_read(dev, 0x2400, eeprom, 832);
 }
 
+int mlx90640_get_current_resolution(struct mlx90640_device *dev)
+{
+    rt_uint16_t controlRegister1;
+    rt_uint16_t resolutionRAM;
+    rt_err_t error;
+    
+    error = mlx90640_read(dev, 0x800D, &controlRegister1, 1);
+    if (error != RT_EOK)
+    {
+        return error;
+    }    
+
+    resolutionRAM = (controlRegister1 & 0x0C00) >> 10;
+    rt_kprintf("current resolution is 0x%x\r\n", resolutionRAM);
+
+    return resolutionRAM; 
+}
+
+int mlx90640_set_current_resolution(struct mlx90640_device *dev, rt_uint16_t resolution)
+{
+    rt_uint16_t controlRegister1;
+    rt_uint16_t value;
+    rt_err_t error;
+    
+    value = (resolution & 0x03) << 10;
+    
+    error = mlx90640_read(dev, 0x800D, &controlRegister1, 1);
+    
+    if (error == RT_EOK)
+    {
+        value = (controlRegister1 & 0xF3FF) | value;
+        error = mlx90640_write(dev, 0x800D, value);        
+    }    
+    
+    return error;
+}
+
 /**
  * This function initialize the mlx90640 device.
  *
@@ -216,6 +253,9 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
             rt_thread_delay(100);
 
             mlx90640_read_id(dev);
+
+            mlx90640_set_current_resolution(dev, 3);
+            mlx90640_get_current_resolution(dev);
 
             // mlx90640_write(dev, 0x800D, 1);
             // mlx90640_read(dev, 0x2407, data, 4);
