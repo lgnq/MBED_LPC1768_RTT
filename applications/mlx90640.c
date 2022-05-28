@@ -107,7 +107,7 @@ static rt_err_t mlx90640_read(struct mlx90640_device *dev, rt_uint16_t addr, rt_
     struct rt_i2c_msg msgs[2];
 
     rt_uint8_t send_buf[10];
-    rt_uint8_t recv_buf[128];
+    rt_uint8_t *recv_buf = (rt_uint8_t *)data;
 
     send_buf[0] = addr >> 8;
     send_buf[1] = addr & 0xff;
