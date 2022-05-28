@@ -167,9 +167,9 @@ void mlx90640_read_id(struct mlx90640_device *dev)
  * This function initialize the mlx90640 device.
  *
  * @param dev_name the name of transfer device
- * @param param the i2c device address for i2c communication, RT_NULL for spi
+ * @param param the i2c device address for i2c communication
  *
- * @return the pointer of device driver structure, RT_NULL represents  initialization failed.
+ * @return the pointer of device driver structure, RT_NULL represents initialization failed.
  */
 struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
 {
