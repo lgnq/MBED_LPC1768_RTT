@@ -194,6 +194,20 @@ void mlx90640_setup(struct mlx90640_device *dev)
    rt_thread_delay(10000);
 }
 
+void mlx90640_read_id(struct mlx90640_device *dev)
+{
+    rt_uint16_t id[3];
+
+    mlx90640_read(dev, 0x2407, id, 3);
+
+    rt_kprintf("Read MLX90640 ID is ");
+
+    for (int i=0; i<3; i++)
+    {
+        rt_kprintf("0x%x ", id[i]);
+    }    
+}
+
 /**
  * This function initialize the mlx90640 device.
  *
@@ -237,14 +251,16 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
 
             mlx90640_reset(dev);
 
-            rt_thread_delay(500);
+            rt_thread_delay(100);
+
+            mlx90640_read_id(dev);
 
             // mlx90640_write(dev, 0x800D, 1);
-            mlx90640_read(dev, 0x2407, data, 4);
-            for (int i=0; i<4; i++)
-            {
-                rt_kprintf("0x%x ", data[i]);
-            }
+            // mlx90640_read(dev, 0x2407, data, 4);
+            // for (int i=0; i<4; i++)
+            // {
+            //     rt_kprintf("0x%x ", data[i]);
+            // }
             // mlx90640_read(dev, 0x2407, &data, 4);
             // mlx90640_read(dev, 0x800D, data, 10);
             // mlx90640_read(dev, 0x2409, &data, 2);
