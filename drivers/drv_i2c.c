@@ -67,6 +67,7 @@ static void lpc17xx_set_sda(void *data, rt_int32_t state)
     {
         rt_pin_write(cfg->sda, PIN_LOW);
     }
+    // rt_kprintf("SET SDA PIN[%d] = %d\r\n", cfg->sda, state);
 }
 
 /**
@@ -99,7 +100,7 @@ static rt_int32_t lpc17xx_get_sda(void *data)
 
     struct lpc17xx_soft_i2c_config* cfg = (struct lpc17xx_soft_i2c_config*)data;
     pin_val = rt_pin_read(cfg->sda);
-    // rt_kprintf("SDA PIN[%d] = %d\r\n", cfg->sda, pin_val);
+    // rt_kprintf("GET SDA PIN[%d] = %d\r\n", cfg->sda, pin_val);
 
     return pin_val;
 }
@@ -417,7 +418,6 @@ static const struct rt_i2c_bus_device_ops i2c_ops =
 
 int rt_hw_i2c_init(void)
 {
-    static struct lpc_i2c_bus lpc_i2c2;
 	PINSEL_CFG_Type PinCfg;
 
 	/*
@@ -431,6 +431,8 @@ int rt_hw_i2c_init(void)
     /* register I2C2: SCL/P0_11 SDA/P0_10 */
 
 #ifdef BSP_USING_I2C0
+    static struct lpc_i2c_bus lpc_i2c0;
+
 	PinCfg.Funcnum = 1;
 	PinCfg.Pinnum = 27;
 	PinCfg.Portnum = 0;
@@ -443,9 +445,16 @@ int rt_hw_i2c_init(void)
 
 	/* Enable Slave I2C operation */
 	I2C_Cmd(LPC_I2C0, ENABLE);    
+
+    rt_memset((void *)&lpc_i2c0, 0, sizeof(struct lpc_i2c_bus));
+    lpc_i2c0.parent.ops = &i2c_ops;
+    lpc_i2c0.I2C = LPC_I2C0;
+    rt_i2c_bus_device_register(&lpc_i2c0.parent, "i2c0");
 #endif
 
 #ifdef BSP_USING_I2C1
+    static struct lpc_i2c_bus lpc_i2c1;
+
 	PinCfg.Funcnum = 3;
 	PinCfg.Pinnum = 0;
 	PinCfg.Portnum = 0;
@@ -458,10 +467,17 @@ int rt_hw_i2c_init(void)
 
 	/* Enable Slave I2C operation */
 	I2C_Cmd(LPC_I2C1, ENABLE);    
+
+    rt_memset((void *)&lpc_i2c1, 0, sizeof(struct lpc_i2c_bus));
+    lpc_i2c1.parent.ops = &i2c_ops;
+    lpc_i2c1.I2C = LPC_I2C1;
+    rt_i2c_bus_device_register(&lpc_i2c1.parent, "i2c1");    
 #endif
 
 #ifdef BSP_USING_I2C2
-	PinCfg.Funcnum = 2;
+    static struct lpc_i2c_bus lpc_i2c2;
+	
+    PinCfg.Funcnum = 2;
 	PinCfg.Pinnum = 10;
 	PinCfg.Portnum = 0;
 	PINSEL_ConfigPin(&PinCfg);
@@ -473,12 +489,12 @@ int rt_hw_i2c_init(void)
 
 	/* Enable Slave I2C operation */
 	I2C_Cmd(LPC_I2C2, ENABLE);    
-#endif
 
     rt_memset((void *)&lpc_i2c2, 0, sizeof(struct lpc_i2c_bus));
     lpc_i2c2.parent.ops = &i2c_ops;
     lpc_i2c2.I2C = LPC_I2C2;
-    rt_i2c_bus_device_register(&lpc_i2c2.parent, "i2c2");
+    rt_i2c_bus_device_register(&lpc_i2c2.parent, "i2c2");    
+#endif
 
     return 0;
 }
