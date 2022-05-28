@@ -126,11 +126,12 @@ static rt_err_t mlx90640_read(struct mlx90640_device *dev, rt_uint16_t addr, rt_
     
     if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
     {
-        for (int i = 0; i < num; )
+        for (int i=0; i < num*2;)
         {
-            rt_kprintf("recv_buf[%d] = 0x%x 0x%x\r\n", i/2, recv_buf[i], recv_buf[i+1]);
+            *data++ = (rt_uint16_t)recv_buf[i]*256 + (rt_uint16_t)recv_buf[i+1];
             i = i + 2;
         }
+
         res = RT_EOK;
     }
     else
@@ -204,7 +205,7 @@ void mlx90640_setup(struct mlx90640_device *dev)
 struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
 {
     struct mlx90640_device *dev = RT_NULL;
-    rt_uint16_t data;
+    rt_uint16_t data[20];
 
     RT_ASSERT(dev_name);
 
@@ -239,9 +240,13 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
             rt_thread_delay(500);
 
             // mlx90640_write(dev, 0x800D, 1);
-            // mlx90640_read(dev, 0x2407, &data, 20);
+            mlx90640_read(dev, 0x2407, data, 4);
+            for (int i=0; i<4; i++)
+            {
+                rt_kprintf("0x%x ", data[i]);
+            }
             // mlx90640_read(dev, 0x2407, &data, 4);
-            mlx90640_read(dev, 0x800D, &data, 1);
+            // mlx90640_read(dev, 0x800D, data, 10);
             // mlx90640_read(dev, 0x2409, &data, 2);
             // rt_kprintf("id = 0x%x\r\n", data);
 
