@@ -27,6 +27,14 @@ struct mlx90640_device
     rt_uint8_t i2c_addr;
 };
 
+enum mlx90640_resolution
+{
+    ADC_SET_TO_16_BIT_RESOLUTION = 0,
+    ADC_SET_TO_17_BIT_RESOLUTION = 1,
+    ADC_SET_TO_18_BIT_RESOLUTION = 2,   //default
+    ADC_SET_TO_19_BIT_RESOLUTION = 3
+};
+
 union mlx90640_control_register1
 {
     rt_uint16_t word_val;
@@ -39,7 +47,7 @@ union mlx90640_control_register1
         rt_uint8_t enable_subpages_repeat       : 1;
         rt_uint8_t select_subpage               : 3;
         rt_uint8_t refresh_rate                 : 3;
-        rt_uint8_t resolution                   : 2;
+        enum mlx90640_resolution resolution     : 2;
         rt_uint8_t reading_pattern              : 1;
         rt_uint8_t reserved2                    : 3;
     };
