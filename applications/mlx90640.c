@@ -159,7 +159,7 @@ void mlx90640_read_id(struct mlx90640_device *dev)
 
     for (int i=0; i<3; i++)
     {
-        rt_kprintf("Device ID%d = 0x%x\r\n", i, id[i]);
+        rt_kprintf("Device ID%d = 0x%04x\r\n", i, id[i]);
     }    
 }
 
