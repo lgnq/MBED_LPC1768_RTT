@@ -170,7 +170,27 @@ rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev)
     {
         reg.word_val = val;
         dev->resolution = reg.resolution;
-        rt_kprintf("current resolution is 0x%x\r\n", dev->resolution);
+
+#ifdef MLX90640_DEBUG
+        switch (dev->resolution)
+        {
+            case ADC_SET_TO_16_BIT_RESOLUTION:
+                rt_kprintf("Resolution is 16 bits\r\n");
+                break;
+            case ADC_SET_TO_17_BIT_RESOLUTION:
+                rt_kprintf("Resolution is 17 bits\r\n");
+                break;
+            case ADC_SET_TO_18_BIT_RESOLUTION:
+                rt_kprintf("Resolution is 18 bits\r\n");
+                break;
+            case ADC_SET_TO_19_BIT_RESOLUTION:
+                rt_kprintf("Resolution is 19 bits\r\n");
+                break;                
+            default:
+                rt_kprintf("Resolution is wrong\r\n");
+                break;                                                                                   
+        }
+#endif
     }
 
     return res; 
