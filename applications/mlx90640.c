@@ -176,13 +176,11 @@ rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev, rt_uint16_
     rt_err_t res = RT_EOK;
     
     res = mlx90640_read(dev, 0x800D, &controlRegister1, 1);
-    if (res != RT_EOK)
+    if (res == RT_EOK)
     {
-        return res;
+        *resolution = (controlRegister1 & 0x0C00) >> 10;
+        rt_kprintf("current resolution is 0x%x\r\n", *resolution);
     }    
-
-    *resolution = (controlRegister1 & 0x0C00) >> 10;
-    rt_kprintf("current resolution is 0x%x\r\n", *resolution);
 
     return res; 
 }
@@ -212,13 +210,11 @@ rt_err_t mlx90640_get_refresh_rate(struct mlx90640_device *dev, rt_uint16_t *ref
     rt_err_t res = RT_EOK;
     
     res = mlx90640_read(dev, 0x800D, &controlRegister1, 1);
-    if (res != RT_EOK)
+    if (res == RT_EOK)
     {
-        return res;
+        *refresh_rate = (controlRegister1 & 0x0380) >> 7;
+        rt_kprintf("current refresh rate is 0x%x\r\n", *refresh_rate);
     }    
-
-    *refresh_rate = (controlRegister1 & 0x0380) >> 7;
-    rt_kprintf("current refresh rate is 0x%x\r\n", *refresh_rate);
     
     return res;
 }
