@@ -79,7 +79,7 @@ static rt_err_t mlx90640_read(struct mlx90640_device *dev, rt_uint16_t addr, rt_
     
     if (rt_i2c_transfer((struct rt_i2c_bus_device *)dev->bus, msgs, 2) == 2)
     {
-        for (rt_uint8_t i=0; i < num*2;)
+        for (rt_uint16_t i=0; i < num*2;)
         {
             *data++ = (rt_uint16_t)recv_buf[i]*256 + (rt_uint16_t)recv_buf[i+1];
             i = i + 2;
@@ -140,13 +140,6 @@ static rt_err_t mlx90640_write(struct mlx90640_device *dev, rt_uint16_t addr, rt
     return res;
 }
 
-void mlx90640_setup(struct mlx90640_device *dev)
-{
-   mlx90640_reset(dev);
-
-   rt_thread_delay(1000);
-}
-
 void mlx90640_read_id(struct mlx90640_device *dev)
 {
     rt_uint16_t id[3];
@@ -161,11 +154,9 @@ void mlx90640_read_id(struct mlx90640_device *dev)
     }    
 }
 
-rt_err_t mlx90640_dump_eeprom(struct mlx90640_device *dev)
+rt_err_t mlx90640_dump_eeprom(struct mlx90640_device *dev, rt_uint16_t *eeprom)
 {
-    rt_uint16_t eeprom[832];
-
-    return mlx90640_read(dev, 0x2400, eeprom, 832);
+    return mlx90640_read(dev, EEPROM_START_ADDR, eeprom, EEPROM_LENGTH);
 }
 
 rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev, enum mlx90640_resolution *resolution)
@@ -271,6 +262,34 @@ rt_err_t mlx90640_set_reading_pattern(struct mlx90640_device *dev, enum mlx90640
     return res;
 }
 
+rt_err_t mlx90640_setup(struct mlx90640_device *dev)
+{
+    rt_err_t res = RT_EOK;
+
+    rt_uint16_t eeprom[EEPROM_LENGTH];
+
+    mlx90640_reset(dev);
+    mlx90640_read_id(dev);
+
+    res = mlx90640_dump_eeprom(dev, eeprom);
+    if (res != RT_EOK)
+    {
+        return res;
+    }
+
+#ifdef MLX90640_DEBUG
+    for (int i=0; i<832; i++)
+    {
+        rt_kprintf("0x%04x, ", eeprom[i]);
+
+        if (i%16 == 15)
+            rt_kprintf("\r\n");
+    }
+#endif
+
+    return res;
+}
+
 /**
  * This function initialize the mlx90640 device.
  *
@@ -315,17 +334,19 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
             /* find mlx90640 device at address: 0x33 */
             dev->i2c_addr = MLX90640_I2C_ADDRESS;
 
-            mlx90640_reset(dev);
+            mlx90640_setup(dev);
 
-            rt_thread_delay(100);
+            // mlx90640_reset(dev);
 
-            mlx90640_read_id(dev);
+            // rt_thread_delay(100);
 
-            mlx90640_set_current_resolution(dev, ADC_SET_TO_19_BIT_RESOLUTION);
-            mlx90640_get_current_resolution(dev, &resolution);
-            mlx90640_set_refresh_rate(dev, IR_REFRESH_RATE_64_HZ);
-            mlx90640_get_refresh_rate(dev, &refresh_rate);
-            mlx90640_get_reading_pattern(dev, &reading_pattern);
+            // mlx90640_read_id(dev);
+
+            // mlx90640_set_current_resolution(dev, ADC_SET_TO_19_BIT_RESOLUTION);
+            // mlx90640_get_current_resolution(dev, &resolution);
+            // mlx90640_set_refresh_rate(dev, IR_REFRESH_RATE_64_HZ);
+            // mlx90640_get_refresh_rate(dev, &refresh_rate);
+            // mlx90640_get_reading_pattern(dev, &reading_pattern);
 
             // if (mlx90640_read_reg(dev, MPU6XXX_RA_WHO_AM_I, 1, &reg) != RT_EOK)
             // {
