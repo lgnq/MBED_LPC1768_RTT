@@ -78,7 +78,9 @@ struct mlx90640_device
     rt_uint16_t kvdd;
     rt_uint16_t vdd25;
 
+    enum mlx90640_resolution resolution;
     enum mlx90640_refresh_rate refresh_rate;
+    enum mlx90640_reading_pattern reading_pattern;    
 };
 
 #endif
