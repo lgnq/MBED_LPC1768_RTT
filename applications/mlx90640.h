@@ -13,6 +13,8 @@
 
 #include <rtthread.h>
 
+#define MLX90640_I2C_ADDRESS                    0x33        // default I2C address of MLX90640 is 0x33
+
 /* mlx90640 device structure */
 struct mlx90640_device
 {
@@ -20,8 +22,5 @@ struct mlx90640_device
     rt_uint8_t id;
     rt_uint8_t i2c_addr;
 };
-
-#define MLX90640_I2C_ADDRESS                    0x33        // address pin A0,A1 low (GND), default for MLX90640
-// #define MLX90640_I2C_ADDRESS                    (0x33 >> 1) // 7-bit address pin A0,A1 low (GND), default for MLX90640
 
 #endif
