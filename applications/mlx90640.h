@@ -30,6 +30,9 @@ struct mlx90640_device
     rt_device_t bus;
     rt_uint16_t id[3];
     rt_uint8_t i2c_addr;
+
+    rt_uint16_t kvdd;
+    rt_uint16_t vdd25;
 };
 
 enum mlx90640_resolution

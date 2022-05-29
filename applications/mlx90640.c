@@ -262,6 +262,34 @@ rt_err_t mlx90640_set_reading_pattern(struct mlx90640_device *dev, enum mlx90640
     return res;
 }
 
+rt_err_t mlx90640_get_vdd_param(struct mlx90640_device *dev)
+{
+    rt_err_t res = RT_EOK;
+    rt_uint16_t val;
+    
+    res = mlx90640_read(dev, 0x2451, &val, 1);
+    if (res == RT_EOK)
+    {
+        dev->kvdd = (val&0xFF00)>>8;
+        if (dev->kvdd > 127)
+        {
+            dev->kvdd = dev->kvdd -256;
+        }
+
+        dev->kvdd = 32 * dev->kvdd;
+
+        dev->vdd25 = val & 0xFF;
+        dev->vdd25 = ((dev->vdd25 - 256) << 5) - 8192;
+
+#ifdef MLX90640_DEBUG
+        rt_kprintf("kVdd: 0x%x\r\n", dev->kvdd);
+        rt_kprintf("vdd25: 0x%x\r\n", dev->vdd25);
+#endif        
+    }
+
+    return res;
+}
+
 rt_err_t mlx90640_setup(struct mlx90640_device *dev)
 {
     rt_err_t res = RT_EOK;
@@ -286,6 +314,8 @@ rt_err_t mlx90640_setup(struct mlx90640_device *dev)
             rt_kprintf("\r\n");
     }
 #endif
+
+    mlx90640_get_vdd_param(dev);
 
     return res;
 }
