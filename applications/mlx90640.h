@@ -13,7 +13,12 @@
 
 #include <rtthread.h>
 
+#define MLX90640_DEBUG
+
 #define MLX90640_I2C_ADDRESS                    0x33        // default I2C address of MLX90640 is 0x33
+
+#define EEPROM_START_ADDR                       0x2400
+#define EEPROM_LENGTH                           832
 
 #define STATUS_REGISTER_ADDR                    0x8000
 #define CONTROL_REGISTER_1_ADDR                 0x800D
@@ -23,7 +28,7 @@
 struct mlx90640_device
 {
     rt_device_t bus;
-    rt_uint8_t id;
+    rt_uint16_t id[3];
     rt_uint8_t i2c_addr;
 };
 
