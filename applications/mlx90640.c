@@ -159,7 +159,7 @@ rt_err_t mlx90640_dump_eeprom(struct mlx90640_device *dev, rt_uint16_t *eeprom)
     return mlx90640_read(dev, EEPROM_START_ADDR, eeprom, EEPROM_LENGTH);
 }
 
-rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev, enum mlx90640_resolution *resolution)
+rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev)
 {
     union mlx90640_control_register1 reg;
     rt_uint16_t val;
@@ -169,8 +169,8 @@ rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev, enum mlx90
     if (res == RT_EOK)
     {
         reg.word_val = val;
-        *resolution = reg.resolution;
-        rt_kprintf("current resolution is 0x%x\r\n", *resolution);
+        dev->resolution = reg.resolution;
+        rt_kprintf("current resolution is 0x%x\r\n", dev->resolution);
     }
 
     return res; 
@@ -260,7 +260,7 @@ rt_err_t mlx90640_set_refresh_rate(struct mlx90640_device *dev, enum mlx90640_re
     return res;
 }
 
-rt_err_t mlx90640_get_reading_pattern(struct mlx90640_device *dev, enum mlx90640_reading_pattern *reading_pattern)
+rt_err_t mlx90640_get_reading_pattern(struct mlx90640_device *dev)
 {
     union mlx90640_control_register1 reg;
     rt_uint16_t val;
@@ -270,8 +270,8 @@ rt_err_t mlx90640_get_reading_pattern(struct mlx90640_device *dev, enum mlx90640
     if (res == RT_EOK)
     {
         reg.word_val = val;
-        *reading_pattern = reg.reading_pattern;
-        rt_kprintf("current reading pattern is 0x%x\r\n", *reading_pattern);
+        dev->reading_pattern = reg.reading_pattern;
+        rt_kprintf("current reading pattern is 0x%x\r\n", dev->reading_pattern);
     }    
     
     return res;
@@ -349,7 +349,11 @@ rt_err_t mlx90640_setup(struct mlx90640_device *dev)
 
     mlx90640_get_vdd_param(dev);
 
+    mlx90640_set_current_resolution(dev, ADC_SET_TO_19_BIT_RESOLUTION);
+    mlx90640_get_current_resolution(dev);
+    mlx90640_set_refresh_rate(dev, IR_REFRESH_RATE_64_HZ);
     mlx90640_get_refresh_rate(dev);
+    mlx90640_get_reading_pattern(dev);
 
     return res;
 }
@@ -365,10 +369,6 @@ rt_err_t mlx90640_setup(struct mlx90640_device *dev)
 struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
 {
     struct mlx90640_device *dev = RT_NULL;
-    rt_uint16_t data[20];
-    enum mlx90640_resolution resolution;
-    enum mlx90640_refresh_rate refresh_rate;
-    enum mlx90640_reading_pattern reading_pattern;
 
     RT_ASSERT(dev_name);
 
@@ -399,18 +399,6 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
             dev->i2c_addr = MLX90640_I2C_ADDRESS;
 
             mlx90640_setup(dev);
-
-            // mlx90640_reset(dev);
-
-            // rt_thread_delay(100);
-
-            // mlx90640_read_id(dev);
-
-            // mlx90640_set_current_resolution(dev, ADC_SET_TO_19_BIT_RESOLUTION);
-            // mlx90640_get_current_resolution(dev, &resolution);
-            // mlx90640_set_refresh_rate(dev, IR_REFRESH_RATE_64_HZ);
-            // mlx90640_get_refresh_rate(dev, &refresh_rate);
-            // mlx90640_get_reading_pattern(dev, &reading_pattern);
 
             // if (mlx90640_read_reg(dev, MPU6XXX_RA_WHO_AM_I, 1, &reg) != RT_EOK)
             // {
