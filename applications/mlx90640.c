@@ -175,7 +175,7 @@ rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev, rt_uint16_
     rt_uint16_t controlRegister1;
     rt_err_t res = RT_EOK;
     
-    res = mlx90640_read(dev, 0x800D, &controlRegister1, 1);
+    res = mlx90640_read(dev, CONTROL_REGISTER_1_ADDR, &controlRegister1, 1);
     if (res == RT_EOK)
     {
         *resolution = (controlRegister1 & 0x0C00) >> 10;
@@ -193,12 +193,12 @@ rt_err_t mlx90640_set_current_resolution(struct mlx90640_device *dev, rt_uint16_
     
     value = (resolution & 0x03) << 10;
     
-    res = mlx90640_read(dev, 0x800D, &controlRegister1, 1);
+    res = mlx90640_read(dev, CONTROL_REGISTER_1_ADDR, &controlRegister1, 1);
     
     if (res == RT_EOK)
     {
         value = (controlRegister1 & 0xF3FF) | value;
-        res = mlx90640_write(dev, 0x800D, value);        
+        res = mlx90640_write(dev, CONTROL_REGISTER_1_ADDR, value);        
     }    
     
     return res;
@@ -209,7 +209,7 @@ rt_err_t mlx90640_get_refresh_rate(struct mlx90640_device *dev, rt_uint16_t *ref
     rt_uint16_t controlRegister1;
     rt_err_t res = RT_EOK;
     
-    res = mlx90640_read(dev, 0x800D, &controlRegister1, 1);
+    res = mlx90640_read(dev, CONTROL_REGISTER_1_ADDR, &controlRegister1, 1);
     if (res == RT_EOK)
     {
         *refresh_rate = (controlRegister1 & 0x0380) >> 7;
@@ -227,11 +227,11 @@ rt_err_t mlx90640_set_refresh_rate(struct mlx90640_device *dev, rt_uint16_t refr
     
     value = (refresh_rate & 0x07)<<7;
     
-    res = mlx90640_read(dev, 0x800D, &controlRegister1, 1);
+    res = mlx90640_read(dev, CONTROL_REGISTER_1_ADDR, &controlRegister1, 1);
     if (res == RT_EOK)
     {
         value = (controlRegister1 & 0xFC7F) | value;
-        res = mlx90640_write(dev, 0x800D, value);
+        res = mlx90640_write(dev, CONTROL_REGISTER_1_ADDR, value);
     }    
     
     return res;
