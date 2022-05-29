@@ -194,7 +194,7 @@ rt_err_t mlx90640_set_current_resolution(struct mlx90640_device *dev, enum mlx90
     return res;
 }
 
-rt_err_t mlx90640_get_refresh_rate(struct mlx90640_device *dev, enum mlx90640_refresh_rate *refresh_rate)
+rt_err_t mlx90640_get_refresh_rate(struct mlx90640_device *dev)
 {
     union mlx90640_control_register1 reg;
     rt_uint16_t val;
@@ -204,9 +204,41 @@ rt_err_t mlx90640_get_refresh_rate(struct mlx90640_device *dev, enum mlx90640_re
     if (res == RT_EOK)
     {
         reg.word_val = val;
-        *refresh_rate = reg.refresh_rate;
-        rt_kprintf("current refresh rate is 0x%x\r\n", *refresh_rate);
-    }    
+        dev->refresh_rate = reg.refresh_rate;
+
+#ifdef MLX90640_DEBUG
+        switch (dev->refresh_rate)
+        {
+            case IR_REFRESH_RATE_0_5_HZ:
+                rt_kprintf("Refresh rate is 0.5 Hz\r\n");
+                break;
+            case IR_REFRESH_RATE_1_HZ:
+                rt_kprintf("Refresh rate is 1 Hz\r\n");
+                break;
+            case IR_REFRESH_RATE_2_HZ:
+                rt_kprintf("Refresh rate is 2 Hz\r\n");
+                break;
+            case IR_REFRESH_RATE_4_HZ:
+                rt_kprintf("Refresh rate is 4 Hz\r\n");
+                break;
+            case IR_REFRESH_RATE_8_HZ:
+                rt_kprintf("Refresh rate is 8 Hz\r\n");
+                break;
+            case IR_REFRESH_RATE_16_HZ:
+                rt_kprintf("Refresh rate is 16 Hz\r\n");
+                break;
+            case IR_REFRESH_RATE_32_HZ:
+                rt_kprintf("Refresh rate is 32 Hz\r\n");
+                break;
+            case IR_REFRESH_RATE_64_HZ:
+                rt_kprintf("Refresh rate is 64 Hz\r\n");
+                break;                         
+            default:
+                rt_kprintf("Refresh rate is wrong\r\n");
+                break;                                                                                   
+        }
+#endif
+    }
     
     return res;
 }
@@ -316,6 +348,8 @@ rt_err_t mlx90640_setup(struct mlx90640_device *dev)
 #endif
 
     mlx90640_get_vdd_param(dev);
+
+    mlx90640_get_refresh_rate(dev);
 
     return res;
 }
