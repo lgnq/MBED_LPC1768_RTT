@@ -185,21 +185,23 @@ rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev, rt_uint16_
     return res; 
 }
 
-rt_err_t mlx90640_set_current_resolution(struct mlx90640_device *dev, rt_uint16_t resolution)
+rt_err_t mlx90640_set_current_resolution(struct mlx90640_device *dev, rt_uint8_t resolution)
 {
-    rt_uint16_t controlRegister1;
-    rt_uint16_t value;
+    union mlx90640_control_register1 reg;
+    rt_uint16_t val;
     rt_err_t res = RT_EOK;
     
-    value = (resolution & 0x03) << 10;
-    
-    res = mlx90640_read(dev, CONTROL_REGISTER_1_ADDR, &controlRegister1, 1);
-    
+    res = mlx90640_read(dev, CONTROL_REGISTER_1_ADDR, &val, 1);
     if (res == RT_EOK)
     {
-        value = (controlRegister1 & 0xF3FF) | value;
-        res = mlx90640_write(dev, CONTROL_REGISTER_1_ADDR, value);        
-    }    
+        rt_kprintf("resolution = 0x%x\r\n", resolution);
+        reg.word_val = val;
+        rt_kprintf("reg.word_val = 0x%x resolution = 0x%x\r\n", reg.word_val, reg.resolution);
+        reg.resolution = resolution;
+        rt_kprintf("reg.word_val = 0x%x resolution = 0x%x\r\n", reg.word_val, reg.resolution);
+
+        res = mlx90640_write(dev, CONTROL_REGISTER_1_ADDR, reg.word_val);        
+    }
     
     return res;
 }
@@ -286,7 +288,7 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
 
             mlx90640_read_id(dev);
 
-            mlx90640_set_current_resolution(dev, 3);
+            mlx90640_set_current_resolution(dev, 2);
             mlx90640_get_current_resolution(dev, &resolution);
             mlx90640_get_refresh_rate(dev, &refresh_rate);
 
