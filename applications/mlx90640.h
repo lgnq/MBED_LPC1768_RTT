@@ -24,17 +24,6 @@
 #define CONTROL_REGISTER_1_ADDR                 0x800D
 #define I2C_CONFIGURATION_REGISTER              0x800F
 
-/* mlx90640 device structure */
-struct mlx90640_device
-{
-    rt_device_t bus;
-    rt_uint16_t id[3];
-    rt_uint8_t i2c_addr;
-
-    rt_uint16_t kvdd;
-    rt_uint16_t vdd25;
-};
-
 enum mlx90640_resolution
 {
     ADC_SET_TO_16_BIT_RESOLUTION = 0,
@@ -77,6 +66,19 @@ union mlx90640_control_register1
         enum mlx90640_reading_pattern reading_pattern   : 1;
         rt_uint8_t reserved2                            : 3;
     };
+};
+
+/* mlx90640 device structure */
+struct mlx90640_device
+{
+    rt_device_t bus;
+    rt_uint16_t id[3];
+    rt_uint8_t i2c_addr;
+
+    rt_uint16_t kvdd;
+    rt_uint16_t vdd25;
+
+    enum mlx90640_refresh_rate refresh_rate;
 };
 
 #endif
