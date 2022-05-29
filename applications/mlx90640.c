@@ -67,8 +67,6 @@ static rt_err_t mlx90640_read(struct mlx90640_device *dev, rt_uint16_t addr, rt_
     send_buf[0] = addr >> 8;
     send_buf[1] = addr & 0xff;
 
-    // rt_kprintf("mlx90640_read addr=0x%x send_buf[0]=0x%x send_buf[1]=0x%x\r\n", addr, send_buf[0], send_buf[1]);
-
     msgs[0].addr  = dev->i2c_addr;    /* I2C Slave address */
     msgs[0].flags = RT_I2C_WR;        /* Write flag */
     msgs[0].buf   = send_buf;         /* Write data pointer */
@@ -328,17 +326,6 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
             mlx90640_set_refresh_rate(dev, IR_REFRESH_RATE_64_HZ);
             mlx90640_get_refresh_rate(dev, &refresh_rate);
             mlx90640_get_reading_pattern(dev, &reading_pattern);
-
-            // mlx90640_write(dev, 0x800D, 1);
-            // mlx90640_read(dev, 0x2407, data, 4);
-            // for (int i=0; i<4; i++)
-            // {
-            //     rt_kprintf("0x%x ", data[i]);
-            // }
-            // mlx90640_read(dev, 0x2407, &data, 4);
-            // mlx90640_read(dev, 0x800D, data, 10);
-            // mlx90640_read(dev, 0x2409, &data, 2);
-            // rt_kprintf("id = 0x%x\r\n", data);
 
             // if (mlx90640_read_reg(dev, MPU6XXX_RA_WHO_AM_I, 1, &reg) != RT_EOK)
             // {
