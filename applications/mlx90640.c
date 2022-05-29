@@ -170,7 +170,7 @@ rt_err_t mlx90640_dump_eeprom(struct mlx90640_device *dev)
     return mlx90640_read(dev, 0x2400, eeprom, 832);
 }
 
-rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev, rt_uint8_t *resolution)
+rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev, enum mlx90640_resolution *resolution)
 {
     union mlx90640_control_register1 reg;
     rt_uint16_t val;
@@ -182,12 +182,12 @@ rt_err_t mlx90640_get_current_resolution(struct mlx90640_device *dev, rt_uint8_t
         reg.word_val = val;
         *resolution = reg.resolution;
         rt_kprintf("current resolution is 0x%x\r\n", *resolution);
-    }    
+    }
 
     return res; 
 }
 
-rt_err_t mlx90640_set_current_resolution(struct mlx90640_device *dev, rt_uint8_t resolution)
+rt_err_t mlx90640_set_current_resolution(struct mlx90640_device *dev, enum mlx90640_resolution resolution)
 {
     union mlx90640_control_register1 reg;
     rt_uint16_t val;
