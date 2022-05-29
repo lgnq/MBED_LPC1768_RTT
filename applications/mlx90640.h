@@ -47,21 +47,27 @@ enum mlx90640_refresh_rate
     IR_REFRESH_RATE_64_HZ   = 7
 };
 
+enum mlx90640_reading_pattern
+{
+    INTERLEAVED_MODE  = 0,
+    CHESS_PATTERN     = 1,  //default
+};
+
 union mlx90640_control_register1
 {
     rt_uint16_t word_val;
 
     struct
     {
-        rt_uint8_t enable_subpages_mode         : 1;
-        rt_uint8_t reserved1                    : 1;
-        rt_uint8_t enable_data_hold             : 1;
-        rt_uint8_t enable_subpages_repeat       : 1;
-        rt_uint8_t select_subpage               : 3;
-        enum mlx90640_refresh_rate refresh_rate : 3;
-        enum mlx90640_resolution resolution     : 2;
-        rt_uint8_t reading_pattern              : 1;
-        rt_uint8_t reserved2                    : 3;
+        rt_uint8_t enable_subpages_mode                 : 1;
+        rt_uint8_t reserved1                            : 1;
+        rt_uint8_t enable_data_hold                     : 1;
+        rt_uint8_t enable_subpages_repeat               : 1;
+        rt_uint8_t select_subpage                       : 3;
+        enum mlx90640_refresh_rate refresh_rate         : 3;
+        enum mlx90640_resolution resolution             : 2;
+        enum mlx90640_reading_pattern reading_pattern   : 1;
+        rt_uint8_t reserved2                            : 3;
     };
 };
 
