@@ -251,7 +251,7 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
 {
     struct mlx90640_device *dev = RT_NULL;
     rt_uint16_t data[20];
-    rt_uint8_t resolution = 0;
+    enum mlx90640_resolution resolution;
     rt_uint8_t refresh_rate = 0;
 
     RT_ASSERT(dev_name);
@@ -288,7 +288,7 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
 
             mlx90640_read_id(dev);
 
-            mlx90640_set_current_resolution(dev, 3);
+            mlx90640_set_current_resolution(dev, ADC_SET_TO_19_BIT_RESOLUTION);
             mlx90640_get_current_resolution(dev, &resolution);
             mlx90640_set_refresh_rate(dev, 6);
             mlx90640_get_refresh_rate(dev, &refresh_rate);
