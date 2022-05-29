@@ -35,6 +35,18 @@ enum mlx90640_resolution
     ADC_SET_TO_19_BIT_RESOLUTION = 3
 };
 
+enum mlx90640_refresh_rate
+{
+    IR_REFRESH_RATE_0_5_HZ  = 0,
+    IR_REFRESH_RATE_1_HZ    = 1,
+    IR_REFRESH_RATE_2_HZ    = 2,    //default
+    IR_REFRESH_RATE_4_HZ    = 3,
+    IR_REFRESH_RATE_8_HZ    = 4,
+    IR_REFRESH_RATE_16_HZ   = 5,
+    IR_REFRESH_RATE_32_HZ   = 6,
+    IR_REFRESH_RATE_64_HZ   = 7
+};
+
 union mlx90640_control_register1
 {
     rt_uint16_t word_val;
@@ -46,7 +58,7 @@ union mlx90640_control_register1
         rt_uint8_t enable_data_hold             : 1;
         rt_uint8_t enable_subpages_repeat       : 1;
         rt_uint8_t select_subpage               : 3;
-        rt_uint8_t refresh_rate                 : 3;
+        enum mlx90640_refresh_rate refresh_rate : 3;
         enum mlx90640_resolution resolution     : 2;
         rt_uint8_t reading_pattern              : 1;
         rt_uint8_t reserved2                    : 3;

@@ -205,7 +205,7 @@ rt_err_t mlx90640_set_current_resolution(struct mlx90640_device *dev, enum mlx90
     return res;
 }
 
-rt_err_t mlx90640_get_refresh_rate(struct mlx90640_device *dev, rt_uint8_t *refresh_rate)
+rt_err_t mlx90640_get_refresh_rate(struct mlx90640_device *dev, enum mlx90640_refresh_rate *refresh_rate)
 {
     union mlx90640_control_register1 reg;
     rt_uint16_t val;
@@ -222,7 +222,7 @@ rt_err_t mlx90640_get_refresh_rate(struct mlx90640_device *dev, rt_uint8_t *refr
     return res;
 }
 
-rt_err_t mlx90640_set_refresh_rate(struct mlx90640_device *dev, rt_uint8_t refresh_rate)
+rt_err_t mlx90640_set_refresh_rate(struct mlx90640_device *dev, enum mlx90640_refresh_rate refresh_rate)
 {
     union mlx90640_control_register1 reg;
     rt_uint16_t val;
@@ -252,7 +252,7 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
     struct mlx90640_device *dev = RT_NULL;
     rt_uint16_t data[20];
     enum mlx90640_resolution resolution;
-    rt_uint8_t refresh_rate = 0;
+    enum mlx90640_refresh_rate refresh_rate;
 
     RT_ASSERT(dev_name);
 
@@ -290,7 +290,7 @@ struct mlx90640_device *mlx90640_init(const char *dev_name, rt_uint8_t param)
 
             mlx90640_set_current_resolution(dev, ADC_SET_TO_19_BIT_RESOLUTION);
             mlx90640_get_current_resolution(dev, &resolution);
-            mlx90640_set_refresh_rate(dev, 6);
+            mlx90640_set_refresh_rate(dev, IR_REFRESH_RATE_64_HZ);
             mlx90640_get_refresh_rate(dev, &refresh_rate);
 
             // mlx90640_write(dev, 0x800D, 1);
