@@ -27,4 +27,22 @@ struct mlx90640_device
     rt_uint8_t i2c_addr;
 };
 
+union mlx90640_control_register1
+{
+    rt_uint16_t word_val;
+
+    struct
+    {
+        rt_uint8_t enable_subpages_mode         : 1;
+        rt_uint8_t reserved1                    : 1;
+        rt_uint8_t enable_data_hold             : 1;
+        rt_uint8_t enable_subpages_repeat       : 1;
+        rt_uint8_t select_subpage               : 3;
+        rt_uint8_t refresh_rate                 : 3;
+        rt_uint8_t resolution                   : 2;
+        rt_uint8_t reading_pattern              : 1;
+        rt_uint8_t reserved2                    : 3;
+    };
+};
+
 #endif
