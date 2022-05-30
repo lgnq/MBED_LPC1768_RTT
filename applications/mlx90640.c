@@ -465,6 +465,28 @@ rt_err_t mlx90640_get_tgc_param(struct mlx90640_device *dev)
     return res;
 }
 
+rt_err_t mlx90640_get_resolution_param(struct mlx90640_device *dev)
+{
+    rt_err_t res = RT_EOK;
+    rt_uint16_t eeprom56;
+
+    rt_uint8_t resolution;
+    
+    res = mlx90640_read(dev, 0x2456, &eeprom56, 1);
+    if (res == RT_EOK)
+    {
+        resolution = (eeprom56 & 0x3000) >> 12;
+
+        dev->resolution = resolution;
+
+#ifdef MLX90640_DEBUG
+        rt_kprintf("resolution: 0x%x\r\n", dev->resolution);
+#endif        
+    }
+
+    return res;
+}
+
 rt_err_t mlx90640_setup(struct mlx90640_device *dev)
 {
     rt_err_t res = RT_EOK;
@@ -494,6 +516,7 @@ rt_err_t mlx90640_setup(struct mlx90640_device *dev)
     mlx90640_get_ptat_param(dev);
     mlx90640_get_gain_param(dev);
     mlx90640_get_tgc_param(dev);
+    mlx90640_get_resolution_param(dev);
 
     mlx90640_set_current_resolution(dev, ADC_SET_TO_19_BIT_RESOLUTION);
     mlx90640_get_current_resolution(dev);
