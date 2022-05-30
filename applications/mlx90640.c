@@ -15,6 +15,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 rt_err_t mlx90640_reset(struct mlx90640_device *dev)
 {
@@ -342,6 +343,69 @@ rt_err_t mlx90640_get_vdd_param(struct mlx90640_device *dev)
     return res;
 }
 
+rt_err_t mlx90640_get_ptat_param(struct mlx90640_device *dev)
+{
+    rt_err_t res = RT_EOK;
+    rt_uint16_t eeprom16;
+    rt_uint16_t eeprom49;
+    rt_uint16_t eeprom50;
+
+    float KvPTAT;
+    float KtPTAT;
+    rt_int16_t vPTAT25;
+    float alphaPTAT;
+
+    res = mlx90640_read(dev, 0x2416, &eeprom16, 1);
+    if (res != RT_EOK)
+    {
+        return res;
+    }
+
+    res = mlx90640_read(dev, 0x2449, &eeprom49, 1);
+    if (res != RT_EOK)
+    {
+        return res;
+    }
+
+    res = mlx90640_read(dev, 0x2450, &eeprom50, 1);
+    if (res != RT_EOK)
+    {
+        return res;
+    }    
+
+    KvPTAT = (eeprom50 & 0xFC00) >> 10;
+    if (KvPTAT > 31)
+    {
+        KvPTAT = KvPTAT - 64;
+    }
+    KvPTAT = KvPTAT/4096;
+
+    KtPTAT = eeprom50 & 0x03FF;
+    if (KtPTAT > 511)
+    {
+        KtPTAT = KtPTAT - 1024;
+    }
+    KtPTAT = KtPTAT/8;
+
+    vPTAT25 = eeprom49;
+
+    alphaPTAT = (eeprom16 & 0xF000) / pow(2, (double)14) + 8.0f;
+
+    dev->KvPTAT = KvPTAT;
+    dev->KtPTAT = KtPTAT;
+    dev->vPTAT25 = vPTAT25;
+    dev->alphaPTAT = alphaPTAT;
+
+#ifdef MLX90640_DEBUG
+    rt_kprintf("KvPTAT: 0x%x\r\n", dev->KvPTAT);
+    rt_kprintf("KtPTAT: 0x%x\r\n", dev->KtPTAT);
+    rt_kprintf("vPAT25: 0x%x\r\n", dev->vPTAT25);
+    rt_kprintf("alphaPTAT: 0x%x\r\n", dev->alphaPTAT);
+#endif        
+
+    return res;
+}
+
 rt_err_t mlx90640_setup(struct mlx90640_device *dev)
 {
     rt_err_t res = RT_EOK;
@@ -368,6 +432,7 @@ rt_err_t mlx90640_setup(struct mlx90640_device *dev)
 #endif
 
     mlx90640_get_vdd_param(dev);
+    mlx90640_get_ptat_param(dev);
 
     mlx90640_set_current_resolution(dev, ADC_SET_TO_19_BIT_RESOLUTION);
     mlx90640_get_current_resolution(dev);

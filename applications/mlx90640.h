@@ -75,8 +75,34 @@ struct mlx90640_device
     rt_uint16_t id[3];
     rt_uint8_t i2c_addr;
 
-    rt_uint16_t kvdd;
-    rt_uint16_t vdd25;
+    rt_int16_t kvdd;
+    rt_int16_t vdd25;
+
+    float KvPTAT;
+    float KtPTAT;
+    rt_uint16_t vPTAT25;
+    float alphaPTAT;
+    rt_int16_t gainEE;
+    float tgc;
+    float cpKv;
+    float cpKta;
+    rt_uint8_t resolutionEE;
+    rt_uint8_t calibrationModeEE;
+    float KsTa;
+    float ksTo[5];
+    rt_int16_t ct[5];
+    rt_uint16_t alpha[768];
+    rt_uint8_t alphaScale;
+    rt_int16_t offset[768];
+    rt_int8_t kta[768];
+    rt_uint8_t ktaScale;
+    rt_int8_t kv[768];
+    rt_uint8_t kvScale;
+    float cpAlpha[2];
+    rt_int16_t cpOffset[2];
+    float ilChessC[3];
+    rt_uint16_t brokenPixels[5];
+    rt_uint16_t outlierPixels[5];    
 
     enum mlx90640_resolution resolution;
     enum mlx90640_refresh_rate refresh_rate;
