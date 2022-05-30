@@ -75,9 +75,8 @@ struct mlx90640_device
     rt_uint16_t id[3];
     rt_uint8_t i2c_addr;
 
-    rt_int16_t kvdd;
+    rt_int16_t kVdd;
     rt_int16_t vdd25;
-
     float KvPTAT;
     float KtPTAT;
     rt_uint16_t vPTAT25;

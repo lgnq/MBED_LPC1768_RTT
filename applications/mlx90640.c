@@ -318,24 +318,30 @@ rt_err_t mlx90640_set_reading_pattern(struct mlx90640_device *dev, enum mlx90640
 rt_err_t mlx90640_get_vdd_param(struct mlx90640_device *dev)
 {
     rt_err_t res = RT_EOK;
-    rt_uint16_t val;
+    rt_uint16_t eeprom51;
+
+    rt_int16_t kVdd;
+    rt_int16_t vdd25;
     
-    res = mlx90640_read(dev, 0x2451, &val, 1);
+    res = mlx90640_read(dev, 0x2451, &eeprom51, 1);
     if (res == RT_EOK)
     {
-        dev->kvdd = (val&0xFF00)>>8;
-        if (dev->kvdd > 127)
+        kVdd = (eeprom51&0xFF00)>>8;
+        if (kVdd > 127)
         {
-            dev->kvdd = dev->kvdd -256;
+            kVdd = kVdd -256;
         }
 
-        dev->kvdd = 32 * dev->kvdd;
+        kVdd = 32 * kVdd;
 
-        dev->vdd25 = val & 0xFF;
-        dev->vdd25 = ((dev->vdd25 - 256) << 5) - 8192;
+        vdd25 = eeprom51 & 0xFF;
+        vdd25 = ((vdd25 - 256) << 5) - 8192;
 
+        dev->kVdd = kVdd;
+        dev->vdd25 = vdd25;
+        
 #ifdef MLX90640_DEBUG
-        rt_kprintf("kVdd: 0x%x\r\n", dev->kvdd);
+        rt_kprintf("kVdd: 0x%x\r\n", dev->kVdd);
         rt_kprintf("vdd25: 0x%x\r\n", dev->vdd25);
 #endif        
     }
