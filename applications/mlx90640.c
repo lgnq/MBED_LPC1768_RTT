@@ -375,6 +375,33 @@ rt_err_t mlx90640_get_gain_param(struct mlx90640_device *dev)
     return res;
 }
 
+rt_err_t mlx90640_get_tgc_param(struct mlx90640_device *dev)
+{
+    rt_err_t res = RT_EOK;
+    rt_uint16_t eeprom60;
+
+    float tgc;
+    
+    res = mlx90640_read(dev, 0x2460, &eeprom60, 1);
+    if (res == RT_EOK)
+    {
+        tgc = eeprom60 & 0x00FF;
+        if (tgc > 127)
+        {
+            tgc = tgc - 256;
+        }
+        tgc = tgc / 32.0f;
+
+        dev->tgc = tgc;
+
+#ifdef MLX90640_DEBUG
+        rt_kprintf("tgc: 0x%x\r\n", dev->tgc);
+#endif        
+    }
+
+    return res;
+}
+
 rt_err_t mlx90640_get_ptat_param(struct mlx90640_device *dev)
 {
     rt_err_t res = RT_EOK;
@@ -466,6 +493,7 @@ rt_err_t mlx90640_setup(struct mlx90640_device *dev)
     mlx90640_get_vdd_param(dev);
     mlx90640_get_ptat_param(dev);
     mlx90640_get_gain_param(dev);
+    mlx90640_get_tgc_param(dev);
 
     mlx90640_set_current_resolution(dev, ADC_SET_TO_19_BIT_RESOLUTION);
     mlx90640_get_current_resolution(dev);
