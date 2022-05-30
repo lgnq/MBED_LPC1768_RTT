@@ -339,10 +339,36 @@ rt_err_t mlx90640_get_vdd_param(struct mlx90640_device *dev)
 
         dev->kVdd = kVdd;
         dev->vdd25 = vdd25;
-        
+
 #ifdef MLX90640_DEBUG
         rt_kprintf("kVdd: 0x%x\r\n", dev->kVdd);
         rt_kprintf("vdd25: 0x%x\r\n", dev->vdd25);
+#endif        
+    }
+
+    return res;
+}
+
+rt_err_t mlx90640_get_gain_param(struct mlx90640_device *dev)
+{
+    rt_err_t res = RT_EOK;
+    rt_uint16_t eeprom48;
+
+    rt_int16_t gainEE;
+    
+    res = mlx90640_read(dev, 0x2448, &eeprom48, 1);
+    if (res == RT_EOK)
+    {
+        gainEE = eeprom48;
+        if (gainEE > 32767)
+        {
+            gainEE = gainEE - 65536;
+        }
+
+        dev->gainEE = gainEE;
+
+#ifdef MLX90640_DEBUG
+        rt_kprintf("gainEE: 0x%x\r\n", dev->gainEE);
 #endif        
     }
 
@@ -439,6 +465,7 @@ rt_err_t mlx90640_setup(struct mlx90640_device *dev)
 
     mlx90640_get_vdd_param(dev);
     mlx90640_get_ptat_param(dev);
+    mlx90640_get_gain_param(dev);
 
     mlx90640_set_current_resolution(dev, ADC_SET_TO_19_BIT_RESOLUTION);
     mlx90640_get_current_resolution(dev);
